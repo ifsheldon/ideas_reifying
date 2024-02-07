@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://ar.reify.ing/</loc>
+    </url>
+    <url>
+        <loc>https://ar.reify.ing/blog/</loc>
+    </url>
+    <url>
+        <loc>https://ar.reify.ing/blog/2020/zola-theme-float/</loc>
+        <lastmod>2020-06-15</lastmod>
+    </url>
+    <url>
+        <loc>https://ar.reify.ing/blog/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://ar.reify.ing/tags/</loc>
+    </url>
+    <url>
+        <loc>https://ar.reify.ing/tags/float/</loc>
+    </url>
+    <url>
+        <loc>https://ar.reify.ing/tags/float/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://ar.reify.ing/tags/zola/</loc>
+    </url>
+    <url>
+        <loc>https://ar.reify.ing/tags/zola/page/1/</loc>
+    </url>
+</urlset>

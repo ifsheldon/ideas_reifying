@@ -1,9 +1,9 @@
 +++
 title = "Float theme for Zola"
 description = "Float features and usage guide"
-draft = false
+draft = true
 
-weight = 2
+weight = 0
 
 [taxonomies]
 tags = ["Float", "Zola"]
@@ -11,7 +11,6 @@ tags = ["Float", "Zola"]
 [extra]
 feature_image = "Float.svg"
 feature = true
-link = ""
 +++
 
 ![Float](Float.png)

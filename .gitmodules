@@ -1,1 +1,4 @@
 
+[submodule "themes/float"]
+	path = themes/float
+	url = git@github.com:ifsheldon/ar_reifying_float_theme.git

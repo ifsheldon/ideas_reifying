@@ -6,7 +6,7 @@ draft = false
 weight = 1
 
 [taxonomies]
-tags = ["CHI", "Apple", "Vision Pro"]
+tags = ["CHI", "Apple", "Vision Pro", "AR"]
 
 [extra]
 feature_image = "nice.png"

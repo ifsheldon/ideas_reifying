@@ -29,6 +29,4 @@ lazy_async_image = true
 
 [extra]
 # Put all your custom variables here
-google_analytics = false
-google_adsense = false
 copyright = "[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)"

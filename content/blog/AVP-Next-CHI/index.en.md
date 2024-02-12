@@ -50,7 +50,7 @@ headset. And at that time, the accuracy of gesture recognition was barely usable
 half
 an hour of using this interaction experience.
 
-![HoloLens 1 Cursor](./hololens1_cursor.png)
+![HoloLens 1 Cursor](./hololens1_cursor_en.png)
 
 > Screenshot from https://youtu.be/4DbppcFIDMw?si=k5MzlMTN7aMRkJTT&t=320
 
@@ -70,7 +70,7 @@ Hand interaction is very natural, with almost no learning curve, but the experie
 the opposite. Simply put, imagine holding a long stick with the index finger and thumb of each hand, trying to
 control a touchscreen two to three meters away.
 
-![hololens2_hand](./hololens2_hand.png)
+![hololens2_hand](./hololens2_hand_en.png)
 
 > Screenshot from https://youtu.be/t0q8vWLjkyo?si=hbxSfwJuMbnjo1mI
 

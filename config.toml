@@ -7,6 +7,7 @@ description = "AR/MR/XR Blogs at Reifying"
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
 minify_html = true
+default_language = "zh"
 
 author = "FL<fl@reify.ing>"
 
@@ -17,6 +18,10 @@ taxonomies = [
 ]
 
 [languages.en]
+title = "AR at Reify.ing"
+taxonomies = [
+    {name = "tags", paginate_by = 10},
+]
 # Whether to build a search index to be used later on by a JavaScript library
 build_search_index = true
 

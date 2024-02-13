@@ -173,7 +173,7 @@ or demonstrated it on Vision Pro.
 > Image from Apple patent illustration
 
 In the direction of thumb interaction, there's still much more interesting exploration to be done, but I'll leave a
-cliffhanger here. In the next blog post, I'll share my thoughts on improving this patent and the broader implications of
+cliffhanger here. In the next blog posts, I'll share my thoughts on improving this patent and the broader implications of
 my improvements.
 
 ## Epilogue
@@ -184,7 +184,7 @@ want everything. There are many scenarios for interaction, and it can't be just 
 
 ## Metadata
 
-Version: 0.2
+Version: 0.2.1
 
 Date: 2024-02-09
 
@@ -195,3 +195,5 @@ License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 2024.02.11: Updated various illustrations
 
 2024.02.12: Updated TL;DR and English translation
+
+2024.02.14: Updated few wordings

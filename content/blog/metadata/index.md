@@ -6,7 +6,7 @@ draft = false
 weight = 0
 
 [taxonomies]
-tags = ["metadata", "misc"]
+tags = ["元数据", "其余"]
 
 [extra]
 feature = true

@@ -6,7 +6,7 @@ draft = false
 weight = 1
 
 [taxonomies]
-tags = ["CHI", "Apple", "Vision Pro", "AR"]
+tags = ["人机交互", "苹果", "Vision Pro", "增强现实"]
 
 [extra]
 feature_image = "nice.png"

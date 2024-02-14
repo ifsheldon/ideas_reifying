@@ -157,11 +157,11 @@ Initialization:
         * Otherwise, handle it as "If the hand is in the comfort zone but O is not"
 7. Recognize the user's hand gestures and process the interaction part, which is beyond the scope of this patent
 
-Notes on the algorithm:
+**Notes on the algorithm:**
 
 Steps 5 and 6 can be combined into one step in actual implementation to further optimize performance under specific conditions. For example, when there is only one virtual object in the virtual scene, or when the user has set to always lock onto a certain virtual object, etc.
 
-Footnotes:
+**Footnotes:**
 
 *0: The direction of the virtual ray is defined as the normal direction of the palm plane, not the existing solutions (HoloLens uses the direction of the user's forearm; Solution 2 uses the direction of the controller)
 

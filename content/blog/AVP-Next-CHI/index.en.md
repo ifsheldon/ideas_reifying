@@ -179,7 +179,7 @@ my improvements.
 ## Epilogue
 
 Yes, you're right to ask, interaction isn't just about text input, so what about other aspects? I'll split the answer
-into two folds: one will be in my next blog post, and the other is quite simple: kids make choices, grown-ups
+into two folds: one will be in [my next blog post](@/blog/AR-CHI-Patent/index.en.md), and the other is quite simple: kids make choices, grown-ups
 want everything. There are many scenarios for interaction, and it can't be just one solution. Why can't we have it all?
 
 ## Metadata

@@ -15,7 +15,7 @@ feature = true
 
 **“Apple Vision Pro 交互的下一站在哪里？”**
 
-很多人应该或多或少在想这同一个问题，我思考这个问题的起因是，前两天我在看 Apple Vision Pro 的第一批上手视频，里面说到两个痛点：
+很多人应该或多或少想过这同一个问题，我思考这个问题的起因是，前两天我在看 Apple Vision Pro 的第一批上手视频，里面说到两个痛点：
 
 1. AVP 里虚拟键盘很不方便，日常使用最多输入密码。经常需要打字，推荐入手 Magic Keyboard 和 Magic Trackpad
 

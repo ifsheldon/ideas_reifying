@@ -15,7 +15,7 @@ feature = true
 
 **"Where is the Next Frontier for Computer Human Interaction on Vision Pro"**
 
-Many might be pondering more or less the same question, and I've been thinking about this since when I watched the
+Many might have pondered more or less the same question, and I've been thinking about this since when I watched the
 first hands-on videos for Apple Vision Pro in which they highlighted two major pain points:
 
 1. The virtual keyboard in AVP is quite inconvenient, mostly used for passwords. Frequent typists are advised to

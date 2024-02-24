@@ -194,6 +194,8 @@ TODOs:
 * 产品驱动的模型开发
 * Rabbit R1
 * 梯度 API 和 AI OS
+* AI 原生硬件的想象
+* OpenAI 的边界？
 
 ## 总结和亮点
 

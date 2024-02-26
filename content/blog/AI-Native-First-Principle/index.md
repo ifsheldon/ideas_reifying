@@ -114,17 +114,17 @@ feature = true
 
 在教程里，他说到 LLM 有时候会有奇怪的表现，具体是这十一个问题：
 
-* 为什么 LLM 不能拼写单词？Why can't LLM spell words?
-* 为什么 LLM 不能做简单的字符串处理，例如逆转字符串？Why can't LLM do super simple string processing tasks like reversing a string?
-* 为什么 LLM 的对除了英语之外的语言的表现更差？Why is LLM worse at non-English languages (e.g. Japanese)?
-* 为什么 LLM 在简单算术上都做不好？Why is LLM bad at simple arithmetic?
-* 为什么 GPT2 编程 Python 的时候会有很多不必要的麻烦？Why did GPT2 have more than necessary trouble coding in Python?
-* 为什么大模型看见“<|endoftext|>”的时候就突然中断了？Why did my LLM abruptly halt when it sees the string "<|endoftext|>"?
-* 这个奇怪的警告“末尾带有空格”是什么？What is this weird warning I get about a "trailing whitespace"?
-* 我问 LLM 关于“SolidGoldMagikarp”，为什么它突然绷不住了？Why the LLM break if l ask it about "SolidGoldMagikarp"?
-* 为什么用大模型的时候我应该用 YAML 而不是 JSON？Why should I prefer to use YAML over JSON with LLMs?
-* 为什么 LLM 其实不算是在做端到端语言建模？Why is LLM not actually end-to-end language modeling?
-* 上述这些痛苦的根源是什么？What is the real root of suffering?
+* 为什么 LLM 不能拼写单词？
+* 为什么 LLM 不能做简单的字符串处理，例如逆转字符串？
+* 为什么 LLM 的对除了英语之外的语言的表现更差？
+* 为什么 LLM 在简单算术上都做不好？
+* 为什么 GPT2 编程 Python 的时候会有很多不必要的麻烦？
+* 为什么大模型看见“<|endoftext|>”的时候就突然中断了？
+* 这个奇怪的警告“末尾带有空格”是什么？
+* 我问 LLM 关于“SolidGoldMagikarp”，为什么它突然绷不住了？
+* 为什么用大模型的时候我应该用 YAML 而不是 JSON？
+* 为什么 LLM 其实不算是在做端到端语言建模？
+* 上述这些痛苦的根源是什么？
 
 这些问题追根溯源，是分词这个步骤（Tokenization）和分词器（Tokenizer）引起的。而分词器是 LLM 的设计里非常重要的一项*人为*设计。分词器把语言里的词分成更小的部分或者整合成更大的部分，这些都叫词元（Token），例如： “word” 可能会分割成 “wo” 和 “rd”两个词元，而“早啊，吃了吗”可能会因为出现频率比较高而被整合成一个词元。这些词元，才是
 LLM 书写的基本单位。

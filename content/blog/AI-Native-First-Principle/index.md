@@ -35,16 +35,19 @@ feature = true
 
 文章里为了简洁，用了一些“常见”的英语缩写。“常见的英语缩写”可能不是对所有人都常见，所以下面是对照表。
 
-| 英文缩写 |              英文全称               |    中文    |
-|:----:|:-------------------------------:|:--------:|
-|  AI  |     Artificial Intelligence     |   人工智能   |
-| AGI  | Artificial General Intelligence |  通用人工智能  |
-| ASR  |  Automatic Speech Recognition   |  自动语音识别  |
-|  CV  |         Computer Vision         |  计算机视觉   |
-| LLM  |      Large Language Model       |  大语言模型   |
-| NLP  |   Natural Language Processing   |  自然语言处理  |
-|  SD  |        Stable Diffusion         | SD 文生图模型 |
-| TTS  |         Text to Speech          |  文字转语音   |
+| 英文缩写 |               英文全称                |                  中文                  |
+|:----:|:---------------------------------:|:------------------------------------:|
+|  AI  |      Artificial Intelligence      |                 人工智能                 |
+| AGI  |  Artificial General Intelligence  |                通用人工智能                |
+| API  | Application Programming Interface |              应用编程界面/接口               |
+| ASR  |   Automatic Speech Recognition    |                自动语音识别                |
+|  CV  |          Computer Vision          |                计算机视觉                 |
+| GPT  |  General Pretrained Transformer   | 原义是广泛预训练的 Transformer，现在 GPT 已经是整个单词 |
+| LLM  |       Large Language Model        |                大语言模型                 |
+| NLP  |    Natural Language Processing    |                自然语言处理                |
+|  OS  |         Operating System          |                 操作系统                 |
+|  SD  |         Stable Diffusion          |               SD 文生图模型               |
+| TTS  |          Text to Speech           |                文字转语音                 |
 
 ## 问题和似是而非的回答
 
@@ -110,7 +113,7 @@ feature = true
 
 以上已经简单解释了 AI 第一性原理的概念，但是它对系统设计的意义是什么？这里的“系统”我指的是 AI 模型、包含 AI 模型的更大系统。我会举几个例子，并且说说我自己的思考。这些例子不是按时间顺序排序的。
 
-第一个例子是 Andrej Karpathy 前几天发布的教程 *Let's build the GPT Tokenizer*。关注 AI 特别是 LLM 的人应该都看了 *Let's build the GPT Tokenizer*，吧？如果没有看，强烈建议去看一下！Andrej 是个传奇，他的教程也非常有意思而且易懂。
+第一个例子是 Andrej Karpathy 前几天发布的教程《一起构建 GPT 分词器 - Let's build the GPT Tokenizer》。关注 AI 特别是 LLM 的人应该都看了这个教程，吧？如果没有看，强烈建议去看一下！Andrej 是个传奇，他的教程也非常有意思而且易懂。
 
 在教程里，他说到 LLM 有时候会有奇怪的表现，具体是这十一个问题：
 
@@ -401,7 +404,73 @@ TNT。而锤子 TNT 在 ASR 遇上的问题，Rabbit R1 同样也有，例如说
 Rabbit 的产品就一无是处了吗？我觉得也不是，至少 Rabbit 团队的想法走在了前面。在 [Rabbit Research](https://www.rabbit.tech/research) 页面的介绍里，他们确实在训练、微调着自己的模型，把越来越多的能力融合进 LAM 本身，在模型的层面尝试解决应用的问题。这个方向是和 AI 第一性原理相符合的。
 当 LAM 具备越来越多的能力，没准 Rabbit R2 就会是一副 AI 附身的智能眼镜呢？那会是革命性的！
 
+#### AI OS
 
+> 提示：本章节需要一些前置知识，包括：对分词器、嵌入（Embedding）的基本了解和对反向传播（Back Propagation）的扎实理解。
+>
+> 如果你没有这些知识，可以跳过本章节。
+>
+> 或者，以下是入门步骤：
+> 1. 学习反向传播和深度学习模型的训练，强烈推荐看吴恩达的《深度学习 - Deep Learning》课程。里面也涉及嵌入（Embedding）的基本知识。
+> 2. 进一步学习嵌入（Embedding），可以看 Andrej Karpathy 的《从头用代码构建 GPT - Let's Build GPT from Scratch in Code. Spelled Out》教程。教程的一部分介绍了 GPT 是怎么使用词嵌入（Word Embedding）的。
+> 3. 对于分词（Tokenization）和分词器（Tokenizer），最易懂的还是 Andrej Karpathy 的教程《一起构建 GPT 分词器 - Let's build the GPT Tokenizer》。
+
+在这个 LLM 时代，AI 越来越像人了。就像前面说的，AI 的开发过程越来越像人，同时 AI 的智商也越来越像人。开发 AI，很多时候非常像开发一个产品，技术与产品的区分会越来越模糊。甚至 AI 开发会越来越像教育一个人。
+
+很多人都觉得 LLM 会占据未来计算的核心部分，围绕着 LLM 会开发非常多的组件。这样，LLM 就变成了一个 OS 的核心，然后各种组件会形成这个 AI OS 的生态。假如我们把 AI OS 当成一个团队，那么 LLM 就是团队里的中流砥柱；假如我们把 AI OS 类别为神经系统，那么 LLM 是大脑。
+我想请你们记住这两个比方，这两个比方就可以解释很多“为什么”。
+
+AI OS 毋庸置疑是一个平台，所以我们先不管技术，看看这个平台里的角色。这个平台里至少会有三个不同的角色：
+
+* OS：AI OS 本身，提供智能能力和 API
+* 开发者/应用：调用 AI OS 的 API 的用户，也就是开发者，以及他们开发的应用
+* 终端用户：使用 AI OS 的用户，但是不开发应用
+
+在一个 OS 里，这三种角色是可以相互交互的，比如：终端用户可以直接使用 OS 提供的能力，也可以使用开发者开发的应用；开发者提供的应用需要调用 OS 的能力，同时也面向终端用户服务。
+
+![os_roles](./os_roles.png)
+
+举个例子，Rabbit 也开发了一个 [Rabbit OS](https://www.rabbit.tech/rabbit-os)。在 Rabbit OS 里，终端用户可以使用 OS 的能力，也可以使用教师模式（Teach Mode）来给 OS 添加更多能力，所以交互是双向的。
+而目前 Rabbit OS 能够调用现有应用的能力，但是现有的应用没有也不能调用 Rabbit OS 的能力。所以基于我们的分析，Rabbit OS 还不能算是 OS。
+
+![rabbit_os_roles](./rabbit_os_roles.png)
+
+以上是从平台角色来分析，但是从技术上来说 AI OS 的 API 是什么样的呢？回顾历史，目前的 API 主要是两种形式：文本和二进制格式。举例子，你在写代码调用一个库的时候，API 的形式是二进制的；你用 JSON 文件收发消息的时候，API 是基于文本的；我们给别人写文档、发消息的时候，你也可以把人与人之间的 API 看做是文本形式的。
+
+而我们现在拓展 LLM 的能力也是基于文本的，这看起来非常直观、自然。比如说：
+
+* 我们可以定义一个函数，LLM 可以通过函数调用（Function Calling）的形式，以 JSON 文本来调用我们的函数
+* 当然，我们以自然语言命令 LLM 做一项任务的时候，你也可以看作我们用文本的形式调用了 LLM 的智力
+* 在智能体的语境下，LLM 之间也可以通过文本来相互合作（相互调用对方的智力）
+
+如果你还记得 AI 第一性原理（我希望你还记得）和 LLM 语音对话的例子，我觉得你应该会开始觉得有点不对劲了。
+
+但是如果你忘了，我再举例子。 上面两个比方中的一个是把 LLM 比作团队里的核心领导者，那么换成是你，你在与别人合作的时候是否遇上沟通问题或者误会？
+有的时候觉得词不达意？或者有的时候觉得语言被曲解？有的时候会不会想“假如说 TA 能够直接明白我的意思就好了”？
+另一个比方把 LLM 比作大脑，但是请你想一下，我们的大脑在和身体的其他组件沟通的时候，会使用文字吗？例如，大脑给手指发消息“按下那个按钮” 🐶
+
+![brain_to_finger_signals](./brain_to_finger_signals.png)
+
+正如文本不是我们大脑的信号一样，LLM 的 API 也不是基于文本或者二进制数字的。当我们把 LLM 语言交互的例子放在 AI OS 的语境下再审视，LLM 是 AI OS 的核心，而 ASR 和 TTS 是 AI OS 的周边组件。但是在这个应用里，信息的瓶颈是文字。
+
+![llm_voice_system_in_ai_os](./llm_voice_system_in_ai_os.png)
+
+基于文字的 AI OS API 就是我们开发者强加在 AI OS 最具局限性的人为设计（heuristics），而要把 AI OS 的能力释放出来，就必须去掉这个局限，让 LLM 能够以它自己能够理解的，也是保留最多信息的方式和周边组件来交互。
+
+这种方式是什么呢？或者换句话来说，API 还有**第三种形式**吗？
+
+非常熟悉深度学习的同学应该已经想到了。没错，就是嵌入向量（Embeddings）。
+> 准确地来说应该是隐向量（Latent Vectors / Latents）。这里”隐“的意思就是“人类不能理解”的意思。
+
+但是先别急，让我们进一步拆解 GPT 这一种 LLM。作为 LLM 系统，它通常包括分词器、嵌入器、骨干网络、分类器/解码器这四种组件。
+而作为深度学习模型，GPT **只**包含嵌入器/编码器、骨干网络和分类器/解码器这三个部分。
+
+![gpt_components](./gpt_components.png)
+> GPT 处理图像可以通过图像编码器/嵌入器，也可以使用特殊的图像分词器。
+>
+> 这种架构也是目前学界和工业界在开发多模态模型的主流，两个做得非常极致的例子是 [Google Gemini](https://deepmind.google/technologies/gemini/) 和 [AnyGPT](https://arxiv.org/abs/2402.12226)
+
+GPT 骨干网络包含了所有参数量的 90% 以上，可以说是 LLM 智商、情商主要来源。而我们仔细看，GPT 骨干网络的输入和输出都是嵌入向量/隐向量，所以隐向量才是 GPT 自己的语言，是它作为大脑中枢接受和发出的信号。
 
 TODOs:
 
@@ -418,7 +487,7 @@ TODO
 
 ## 元数据
 
-版本：0.0.4
+版本：0.0.6
 
 日期：2024-02-19
 
@@ -426,6 +495,10 @@ TODO
 
 ### 更新日志
 
-2024.02.25: 写完了 AI 第一性原理的基本概念和两个例子
+2024.02.25：写完了 AI 第一性原理的基本概念和两个例子
 
-2024.02.26: 写完了 “OpenAI 的边界在哪里” 章节
+2024.02.26：写完了 “OpenAI 的边界在哪里” 章节
+
+2024.03.03：写完了 Rabbit R1 的例子
+
+2024.03.05：写了 AI OS 的开头

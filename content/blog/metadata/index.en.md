@@ -32,3 +32,17 @@ When you want to quote or link to this blog, please click the link above to unde
 ## Say Hi
 
 fl at reify.ing
+
+## Buy me a coffee
+
+Cheers ☕️
+
+### Wechat Pay
+
+![wechat_QR_pay](./wechat_QR_pay.JPG)
+
+### Patreon
+
+[**Patreon Link**](https://www.patreon.com/user/shop/buy-me-coffee-140915?u=120377676&utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=productshare_creator&utm_content=join_link)
+
+![coffer_on_patreon](./coffee_on_patreon.png)

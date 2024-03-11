@@ -32,3 +32,17 @@ feature_image = "meta.png"
 ## 联系我？
 
 fl at reify.ing
+
+## 给我买杯奶茶？
+
+哎呀，来了就不要带东西了
+
+### 微信
+
+![wechat_QR_pay](./wechat_QR_pay.JPG)
+
+### Patreon
+
+[**链接**](https://www.patreon.com/user/shop/buy-me-coffee-140915?u=120377676&utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=productshare_creator&utm_content=join_link)
+
+![coffer_on_patreon](./coffee_on_patreon.png)

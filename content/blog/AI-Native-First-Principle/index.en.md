@@ -166,7 +166,7 @@ Large models process tokens by converting them into embeddings, then continuousl
 >
 > The overall process is illustrated below, with the top half showing the process and the bottom half providing an example. The double arrows indicate that embeddings are input into the model for forward processing and can also be updated in the backward pass.
 >
-> ![tokenization_embedding](./tokenization_embedding.png)
+> ![tokenization_embedding](./tokenization_embedding_en.png)
 
 However, the corpus used for training the large model might differ from the one used for iterating the tokenizer. In such cases, although the large model has embeddings for "SolidGoldMagikarp," it has never encountered this token during training, so the embeddings for this token have never been
 updated and remain the initial random numbers.
@@ -227,18 +227,18 @@ Then comes speech recognition. The accuracy of ASR is fairly decent, though it m
 LLM is not a big issue. I use [Dify](https://dify.ai) for prompt engineering, and as long as ASR's results aren't outrageously unfaithful, LLM has some ability to correct errors given the context;
 Finally, text-to-speech. Many cloud providers offer TTS services, so I just need to send the LLM's output to a server. Thus, the conceptual pipeline of the entire process looks something like this:
 
-![speech_conversation_concept](./speech_conversation_concept.png)
+![speech_conversation_concept](./speech_conversation_concept_en.png)
 
 Seeing this diagram, those who have learned from the first example's lessons might start to feel something is somewhat amiss. However, I didn't see any problems at the time; it seemed like a standard solution. Let's for now set aside our reservations and assume this is the right approach and
 implement
 it accordingly. Below is the flowchart of my first version of the implementation.
 
-![speech_conversation_implementation_v1](./speech_conversation_impl_v1.png)
+![speech_conversation_implementation_v1](./speech_conversation_impl_v1_en.png)
 
 The first engineering issue encountered was latency. This implementation is the simplest, but it resulted in delays of over ten seconds. Even in the Windows XP era, such latency would have made users terminate the process. However, it's obvious that the implementation can still be improved, so I
 continued to patch and modify it, akin to the first version of the tokenizer in Andrej's tutorial.
 
-![speech_conversation_implementation_final](./speech_conversation_impl_final.png)
+![speech_conversation_implementation_final](./speech_conversation_impl_final_en.png)
 
 After a lot *Make Do and Mend*, the final implementation is shown above. All parts that could be streamlined were made to do so. Then the latency perceived by users, from the end of speaking to the start of playback of the
 first audio block, could be reduced to about 2-4 seconds. Latency could be further reduced by replacing the LLM with a fine-tuned smaller model.
@@ -263,7 +263,7 @@ But what's the key difference between my final implementation and the unified bl
 In this system, the data interface between components is represented as text. ASR provides text to LLM, and LLM passes text to TTS.
 Not mentioning other heuristics, just the tokenizer alone, this system has three different ones.
 
-![speech_conversation_tokenizers](./speech_conversation_tokenizers.png)
+![speech_conversation_tokenizers](./speech_conversation_tokenizers_en.png)
 > One tokenizer is on the ASR output side, one on both the LLM input and output, and another on the TTS input.
 
 From the first example, it's not hard to conclude that tokenizers cause information loss. For example, when a tokenizer directly replaces a "rare" token with "<unk>", the meaning of the token is completely discarded and thus lost.
@@ -299,11 +299,11 @@ And the (ASR + LLM) part of our LLM voice conversation system is strikingly simi
 
 Imagine if an LLM could directly understand text and audio, our voice conversation system's architecture could be significantly simplified.
 
-![audio_llm_flow](./audio_llm_flow.png)
+![audio_llm_flow](./audio_llm_flow_en.png)
 
 Combining GPT-4 Vision's visual capabilities, we can slightly expand the LLM architecture, resulting in a multimodal model like the following:
 
-![multimodal_model_architecture](./multimodal_model_architecture.png)
+![multimodal_model_architecture](./multimodal_model_architecture_en.png)
 
 The light green parts are the components all current LLMs have; the light blue parts are the ones needed to understand and generate audio; the light yellow parts is for GPT-4 Vision to understand images; and the light red parts are needed for the large model to generate images.
 If you've been closely following LLMs, this architecture should be very familiar. This is also the consensus in academia and industry for developing multimodal large models, which is to retain the LLM backbone while continuously adding encoders and decoders for various
@@ -331,7 +331,7 @@ As mentioned earlier, GPT-4 can now see and understand image but cannot create. 
 As for "Sora being a world simulator" or building a world model through Sora, that's just a small part of the AGI blueprint, a means rather than an end. OpenAI's vision is one and only: realizing AGI.
 OpenAI's Vision aside, but what does Sora's next step have to do with AI's first principles? Let's analyze based on input and output supported by Sora.
 
-![sora_input_output](./sora_io.png)
+![sora_input_output](./sora_io_en.png)
 
 Its input and output modalities are asymmetrical, but why is that a problem? It's an issue of information flow, specifically communication. No doubt Sora is impressive, but I don't think it's reached the point of **revolutionizing** the film industry, as some claim.
 I work in AIGC for the film industry, and based on my interviews and observations, a significant portion of creators' efforts is spent on communication and collaboration.
@@ -451,7 +451,7 @@ intelligent and capable version of the Smartisan TNT. The issues Smartisan TNT f
 >
 > If you don't know Smartisan TNT, I encourage you to check it out!
 
-![Rabbit R1 Meme](./rabbit_r1_meme.png)
+![Rabbit R1 Meme](./rabbit_r1_meme_en.png)
 
 It can only understand speeches but not other sounds, which means in terms of information volume, Rabbit R1 is basically the same as the mobile app of ChatGPT.
 When the model of ChatGPT app is updated to the next-gen that can understand sounds and countless sound-based use cases emerge, then Rabbit R1 becomes a new Nokia. By then, no one cares if Rabbit R1 is smaller than phones.
@@ -491,12 +491,12 @@ AI OS is undoubtedly a platform, so let's first put aside technical details and 
 
 In an OS, these three roles can interact with each other. For example, end users can directly use the OS's capabilities or use applications; applications that developers provide need to call the OS's capabilities and also serve end users.
 
-![os_roles](./os_roles.png)
+![os_roles](./os_roles_en.png)
 
 For instance, Rabbit also developed a [Rabbit OS](https://www.rabbit.tech/rabbit-os). In Rabbit OS, end users can use the OS's capabilities and also use the Teach Mode to add more capabilities to the OS, making the interaction bidirectional.
 However, Rabbit OS can currently call existing applications' capabilities, but existing applications can't call Rabbit OS's capabilities. Thus, based on our analysis, Rabbit OS cannot yet be considered an OS.
 
-![rabbit_os_roles](./rabbit_os_roles.png)
+![rabbit_os_roles](./rabbit_os_roles_en.png)
 
 This analysis is from the perspective of platform's roles, but technically, what would AI OS's APIs look like? Looking back at history, current APIs mainly come in two forms: text and binary formats. For example, when you call a library in your code, the API is in binary form; when you send and
 receive
@@ -514,7 +514,7 @@ But if you've forgotten, let me give you another example. One of the analogies w
 Sometimes feeling like your words don't fully convey? Or feeling like your language has been misinterpreted? Have you ever wished, "If only they could directly understand my mind"?
 The other analogy compared LLM to the brain, think about it, does our brain communicate with other body components using text? For example, does the brain send a message to the fingers saying, "Press that button"? 🐶
 
-![brain_to_finger_signals](./brain_to_finger_signals.png)
+![brain_to_finger_signals](./brain_to_finger_signals_en.png)
 
 Just as text is not the signal of our brain, LLM's API is not based on text or binary numbers. When we view the LLM voice conversation example in the context of AI OS, LLM is the kernel of AI OS, while ASR and TTS are peripheries.
 However, in this application, the bottleneck of information is text.
@@ -531,7 +531,7 @@ Those deeply familiar with DL might have already guessed. Yes, it's embeddings.
 But let's not jump into conclusion but further destruct GPT, a type of LLM. As an LLM system, it typically includes four components: tokenizer, embedder, backbone network, and classifier/decoder.
 As a DL model, GPT **only** contains three parts: embedder/encoder, backbone network, and classifier/decoder.
 
-![gpt_components](./gpt_components.png)
+![gpt_components](./gpt_components_en.png)
 > GPT can process images through an image encoder/embedder or use a special image tokenizer.
 >
 > This architecture is also the mainstream in academia and industry for developing multimodal models, with two advanced examples being [Google Gemini](https://deepmind.google/technologies/gemini/) and [AnyGPT](https://arxiv.org/abs/2402.12226)
@@ -553,7 +553,7 @@ focusing more on model training and treating them as training techniques for dif
 As mentioned earlier, models are products, extending to the idea that LLM's APIs are also worth considering and designing from the perspectives of products, users, and ecosystems.
 Next, I will provide several examples to further explain the key questions of these three new APIs, namely "What", "Why", and "How". Let's first view GPT from another perspective:
 
-![llm_pipeline](./llm_pipeline.png)
+![llm_pipeline](./llm_pipeline_en.png)
 
 We take GPT as a pipeline, with the backbone network as the divider. Components that feed information to the backbone network are upstream, while components that receive information from the backbone network are downstream.
 Whether upstream or downstream, these components can be learning-based models, such as neural networks, or non-learning programs, such as tokenizers.
@@ -576,11 +576,11 @@ The T5 model is a language model with 4.7 billion parameters, accounting for mor
 
 When we limit GPT's components to learnable components, we can start discussing the significance of the Gradient API. The Gradient API is mainly for training new **upstream learnable components**. Note that there are two keyword here: "upstream" and "learnable components."
 
-![training_forward_pass](./training_forward_pass.png)
+![training_forward_pass](./training_forward_pass_en.png)
 
 The image above shows the forward pass of model training, while the image below depicts the backward pass of model training.
 
-![training_backward_pass](./training_backward_pass.png)
+![training_backward_pass](./training_backward_pass_en.png)
 
 If we want to train new downstream learning components, the gradient propagation and parameter update process during backpropagation will stop at the downstream learning components, so there's no need for the LLM backbone network, i.e., the AI OS kernel, to provide a Gradient API;
 However, if we want to train a new upstream learning component, gradient propagation must pass through the AI OS kernel, necessitating a Gradient API by the AI OS.
@@ -589,11 +589,11 @@ When the scale of the GPT backbone is still manageable, we can run DL training f
 An example is [MiniGPT-4](https://github.com/Vision-CAIR/MiniGPT-4). My senior fellow used KAUST's GPU servers to train an image embedder (more precisely, the embedder's projection layer).
 For the GPT at the time (LLaMA 1 / Alpaca), this image embedder served as a new upstream component, enabling GPT to "see" images.
 
-![mini-gpt-4](./minigpt4.png)
+![mini-gpt-4](./minigpt4_en.png)
 
 When the scale of the GPT backbone exceeds what most people and organizations (including KAUST) can handle, we'll need the LLM provider to help us compute gradients, specifically the part shown below.
 
-![gradient_api](./gradient_api.png)
+![gradient_api](./gradient_api_en.png)
 
 In fact, we can consider the network that computes gradients as another model. It has the same number of parameters as the original GPT but performs entirely different computations. It accepts gradients (of latent vectors) as input and outputs gradients.
 
@@ -610,7 +610,7 @@ At this point, AI modules have "neural links," similar to the creatures on Pando
 > If the prompt is too long, it occupies valuable context window space.
 > However, by training Gist Tokens, we can compress the information of a long sequence of latent vectors of prompt tokens into a few latent vectors. "Gist Token" isn't quite the right name; it should be "Gist Latents".
 >
-> ![gist_token_training](./gist_token_training.png)
+> ![gist_token_training](./gist_token_training_en.png)
 >
 > The image above illustrates the training of Gist Tokens. During the forward pass, the latent vectors of prompt tokens form a sequence, followed by inserting *N* Gist Token latent vectors. Combined with attention masking, GPT predicts the answer while only seeing Gist Token latent vectors, not the
 > prompt tokens.
@@ -628,7 +628,7 @@ enhancing the entire AI OS system's capabilities at the textual level.
 When we closely examine the components of AI OS, we find a bridging layer between human-understandable language (i.e., text) and LLM-understandable language (i.e., latent vectors). Language is the manifestation of thought.
 Text carries human thoughts and logic, while latent vectors contain LLM's thoughts and logic. The bridging layer consists of the text tokenizer, token embedder, and token classifier.
 
-![llm_human_bridge](./llm_human_bridge.png)
+![llm_human_bridge](./llm_human_bridge_en.png)
 
 The above paragraph might seem abstract, but we actually have a very practical example—[AnyGPT](https://arxiv.org/abs/2402.12226).
 
@@ -707,4 +707,4 @@ License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 
 ### Changelog
 
-2024.03.14: Finished first translation rectification. TODO: translate the texts in diagrams.
+2024.03.14: Finished first translation rectification.

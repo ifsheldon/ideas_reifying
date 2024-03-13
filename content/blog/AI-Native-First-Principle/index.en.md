@@ -1,6 +1,6 @@
 +++
-title = "Nativeness and First Principle of AI"
-description = "TL;DR: Multi-modal intelligence is the key"
+title = "Nativeness and First Principles of AI"
+description = "TL;DR:AI AI First Principles are about information volume; What follows AI First Principles is AI-native; Multi-modal intelligence is the key"
 draft = false
 
 weight = 3
@@ -89,7 +89,7 @@ Once we understand the first principles of AI, the rest of the questions become 
 
 ## The First Principles of AI
 
-So, what are the first principles of AI? I believe it's "information volume," which refers not only to the amount of information but also to its quality and the fidelity of its transmission and conversion.
+So, what are the first principles of AI? I believe it's "information volume", which refers not only to the amount of information but also to its quality and the fidelity of its transmission and conversion.
 
 Those familiar with NLP and CV in deep learning should already be quite acquainted with the concept of "information volume," but I still want to reiterate some rules of thumb derived from DL practices:
 

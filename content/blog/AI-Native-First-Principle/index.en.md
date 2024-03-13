@@ -1,6 +1,6 @@
 +++
 title = "Nativeness and First Principles of AI"
-description = "TL;DR:AI AI First Principles are about information volume; What follows AI First Principles is AI-native; Multi-modal intelligence is the key"
+description = "TL;DR: First Principles of AI are about information volume; What follows AI First Principles is AI-native; Multi-modal intelligence is the key"
 draft = false
 
 weight = 3

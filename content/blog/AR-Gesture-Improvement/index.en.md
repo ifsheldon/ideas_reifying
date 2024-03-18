@@ -1,6 +1,6 @@
 +++
-title = "Next Frontier for Computer Human Interaction on Vision Pro"
-description = "TL;DR: It's at our thumbs! And Apple knows it."
+title = "Draft: AR interaction with thumbs and index fingers"
+description = "TL;DR: Flexibility of index fingers are far more than pressing buttions, which AR interaction should take advantage of"
 draft = false
 
 weight = 3
@@ -9,7 +9,7 @@ weight = 3
 tags = ["CHI", "Apple", "Vision Pro", "AR"]
 
 [extra]
-feature_image = ""
+feature_image = "coordinates_with_hand.png"
 feature = true
 +++
 

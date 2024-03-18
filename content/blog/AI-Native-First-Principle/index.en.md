@@ -20,7 +20,7 @@ feature = true
 
 ## A bit of detour
 
-If the dark-themed cover image scared you, my bad. It features a character from *Jujutsu Kaisen* that I watched in 2023 — Kokichi Muta.
+If the cover image is too dark and scared you, my bad. It features a character from *Jujutsu Kaisen* that I watched in 2023 — Kokichi Muta.
 
 ![Kokichi Muta](./kokichi_muta.png)
 > Mechamaru or its operator—Kokichi Muta
@@ -708,3 +708,5 @@ License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 ### Changelog
 
 2024.03.14: Finished first translation rectification.
+
+2024.03.18: Update a bit of wording

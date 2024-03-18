@@ -3,7 +3,7 @@ title = "Next Frontier for Computer Human Interaction on Vision Pro"
 description = "TL;DR: It's at our thumbs! And Apple knows it."
 draft = false
 
-weight = 1
+weight = 3
 
 [taxonomies]
 tags = ["CHI", "Apple", "Vision Pro", "AR"]

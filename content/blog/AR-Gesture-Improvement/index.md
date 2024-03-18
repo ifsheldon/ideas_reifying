@@ -3,7 +3,7 @@ title = "Draft: AR 交互优化——食指和拇指"
 description = "太长不看：食指的灵活度远不止按按钮这么简单，AR 的交互除了拇指也要尽可能利用食指"
 draft = false
 
-weight = 1
+weight = 3
 
 [taxonomies]
 tags = ["人机交互", "苹果", "Vision Pro", "增强现实"]

@@ -3,7 +3,7 @@ title = "AI 原生和 AI 第一性原理"
 description = "太长不看：AI 第一性原理是信息量；遵循 AI 第一性的是 AI 原生；多模态智能是关键"
 draft = false
 
-weight = 3
+weight = 4
 
 [taxonomies]
 tags = ["AI", "增强现实"]

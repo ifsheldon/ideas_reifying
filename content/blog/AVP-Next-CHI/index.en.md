@@ -163,6 +163,7 @@ Pinyin combination. With corresponding UI, humans can learn this mapping very qu
 staring at your hands.
 
 ![palms](./palms.png)
+> This also applies to English typing. With fuzzy matching, you can quickly type, say "hi", by pressing \[GHI\] twice, because the 3 × 3 combinations contains only a few that make sense.
 
 In Apple's patent, the illustrations already show that pressing different fingers with the thumb can correspond to
 different operations or control different UIs. So it's not that Apple doesn't know, it's that they haven't implemented
@@ -184,7 +185,7 @@ want everything. There are many scenarios for interaction, and it can't be just 
 
 ## Metadata
 
-Version: 0.2.1
+Version: 0.2.2
 
 Date: 2024-02-09
 
@@ -197,3 +198,5 @@ License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 2024.02.12: Updated TL;DR and English translation
 
 2024.02.14: Updated few wordings
+
+2024.03.18: Added a side note under the palm image

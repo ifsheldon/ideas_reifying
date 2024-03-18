@@ -23,11 +23,14 @@ When you want to quote or link to this blog, please click the link above to unde
 
 * [Zola](https://www.getzola.org/): A static site generator written in Rust, I use it to generate this blog.
 * [Float](https://gitlab.com/float-theme/float.git): A theme for Zola, which I did a bit modification to fit my needs.
-  * License：[MIT](https://opensource.org/licenses/MIT)
+    * License：[MIT](https://opensource.org/licenses/MIT)
 * [Oppo Sans](https://www.coloros.com/index/newsDetail?id=72): Sans-serif font used in this blog, which is generously provided by Oppo to the public.
 * [Vercel](https://vercel.com/): I use Vercel to deploy this blog.
 * [MidJourney](https://www.midjourney.com/): I use MidJourney to generate some images in this blog.
 * [OpenAI GPT](https://openai.com) 和 [LobeChat](https://github.com/lobehub/lobe-chat): I use OpenAI GPT and LobeChat to generate some texts in this blog, mostly translation drafts.
+* [Boring](https://github.com/ssiyad/boring): A theme for Zola, which I did a bit modification to fit my needs. It's used for [the landing page of my blog](https://reify.ing).
+    * License: [GPLv3](https://github.com/ssiyad/boring/blob/master/LICENSE)
+    * Copyleft: My modification is published in [my fork](https://github.com/ifsheldon/portal_reifying_boring_theme)
 
 ## Say Hi
 

@@ -211,9 +211,9 @@ impl<O: DeserializeOwned + Send + 'static> Stream for OpenAIEventStream<O> {
 
 ## 元数据
 
-版本：TODO
+版本：1.0.0
 
-日期：TODO
+日期：2024.04.16
 
 版权协议：[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 

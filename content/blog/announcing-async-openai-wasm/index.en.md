@@ -15,7 +15,7 @@ feature = true
 
 > 中文版请见[链接](@/blog/announcing-async-openai-wasm/index.md)
 
-Today, I'm excited to announce the release of [`async-openai-wasm`](https://github.com/ifsheldon/async-openai-wasm)!
+Today, I'm excited to announce the release of [`async-openai-wasm`](https://github.com/ifsheldon/async-openai-wasm) 🎉
 
 `async-openai-wasm` is a fork of [`async-openai`](https://github.com/64bit/async-openai/) and now has stable support for WebAssembly. With it, you can interact with OpenAI's APIs and use it in your WebAssembly projects.
 It targets `wasm32-unknown-unknown`, so basically you can use it in any WebAssembly projects.
@@ -25,7 +25,7 @@ For example, you can now ship frontend-only apps that have AI superpowers withou
 >
 > If you are interested in contributing, please check out the [GitHub repository](https://github.com/ifsheldon/async-openai-wasm).
 >
-> For now, the most wanted is to bring back `backoff` for exponential backing off requests, which is incompatible with `wasm32-unknown-unknown` due to the use of `tokio`/`async-std` functions.
+> For now, the most wanted is to bring back [`backoff`](https://crates.io/crates/backoff) for exponential backing off requests, which is incompatible with `wasm32-unknown-unknown` due to the use of `tokio`/`async-std` functions.
 
 Well, the above is basically all the announcement, but this is only *What*, let's talk about *Why* and *How*.
 

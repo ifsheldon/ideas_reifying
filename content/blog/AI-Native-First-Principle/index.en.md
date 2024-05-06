@@ -3,7 +3,7 @@ title = "Nativeness and First Principles of AI"
 description = "TL;DR: First Principles of AI are about information volume; What follows AI First Principles is AI-native; Multi-modal intelligence is the key"
 draft = false
 
-weight = 5
+weight = 6
 
 [taxonomies]
 tags = ["AI", "AR"]

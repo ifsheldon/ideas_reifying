@@ -40,7 +40,7 @@ him.
 
 ## Abbreviation Glossary
 
-For brevity, the article uses some "common" English abbreviations. "Common" may not be common for everyone, so here's a glossary.
+For brevity, the article uses some "common" English abbreviations. "Common" may not mean the same for everyone, so here's a glossary.
 
 | Abbreviation |                           Full Name                           |
 |:------------:|:-------------------------------------------------------------:|

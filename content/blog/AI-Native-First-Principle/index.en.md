@@ -664,6 +664,10 @@ If you're familiar with DL, these operations are simply adding two rows to two m
 
 This is where the Tokenizer API comes into play. Our ultimate goal is to know when to call these components. Therefore, we need an API to add new vocabulary and train the corresponding latent vectors for new tokens, and that's it.
 
+> In [Octopus V2](https://arxiv.org/abs/2404.01744), the authors proposed the concept of functional tokens, which is actually a specialization of the tokenizer API.
+>
+> Interestingly, the time they uploaded the paper was one month later than when I finished this section.
+
 If you have enough imagination and creativity, these three APIs are enough to turn the world around. For example, we could convert data from force sensors through an encoder into latent vectors recognizable by LLM, giving LLM a sense of touch; train a latent vector to motor movement decoder,
 allowing LLM to control its own body. Even in the future, when brain-computer interfaces mature, we could train a brainwave encoder to transmit our brainwaves to LLM; and use a brainwave decoder to translate LLM's latent vectors into electrical currents for human neural synapses. By then, we could
 communicate bidirectionally with AGI through mere thought!
@@ -699,7 +703,7 @@ bridge the knowledge gap, feel free to come and chat. Perhaps we can do somethin
 
 ## Metadata
 
-Version: 0.1
+Version: 0.2.0
 
 Date: 2024-02-19
 
@@ -710,3 +714,5 @@ License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 2024.03.14: Finished first translation rectification.
 
 2024.03.18: Update a bit of wording
+
+2024.05.09: Add reference to Octopus V2

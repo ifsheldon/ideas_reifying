@@ -518,6 +518,8 @@ use tower_http::validate_request::ValidateRequestHeaderLayer;
 use tower_http::limit::RequestBodyLimitLayer;
 use tower::limit::ConcurrencyLimitLayer;
 
+const AUTH_STR: &str = "asdfghjkl_light_control";
+
 #[tokio::main]
 async fn main() {
     // ... previous code

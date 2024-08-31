@@ -686,6 +686,9 @@ Let's summarize the highlights and key points:
 * AI's first principles' implication for product design:
     * Models as a Product
     * Product needs can also drive model development, forming a product-driven AI model development cycle.
+* AI's first principles' implication for pipeline design and team structuring, details see [MiniMax Link Day updates](#minimax-linkday):
+  * Data collection pipelines should ensure high flow speed of information and feedback.
+  * Teams should be able to adapt to the rapid iteration of AI models and data pipeline.
 * What AI OS looks like:
     * AI OS, besides its kernel (i.e., LLM) and various text/binary APIs, also needs three types of APIs:
         * Latent Vector API, i.e., ALI.
@@ -701,9 +704,28 @@ In fact, the inspiration for the Tokenizer API came from the second friend. My c
 On a broader level, I firmly believe this wave of AI, started from LLMs, can profoundly change our society for the better. At the very least, I hope everyone can access the knowledge they seek through LLMs. I believe knowledge should be affordable for everyone. If you're interested in using LLMs to
 bridge the knowledge gap, feel free to come and chat. Perhaps we can do something different together :)
 
+## 2024.08.31 Update: MiniMax Link Day {#minimax-linkday}
+
+![minimax_linkday](./minimax_linkday.png)
+
+I was pleasantly shocked today at the MiniMax Link Day.
+
+Junjie Yan, the CEO and founder of MiniMax, shared how their technology and users mutually benefit each other. User feedback promotes the growth of the model. 
+However, globally, less than 5% of people are users. He then talked about their determination to tackle the challenges to develop linear attention mechanisms, stating: "If the capability remains unchanged, faster models can be used by more people; and the more people use the model, the better it becomes. In this sense, 'fast' means 'good'."
+
+During the subsequent forum, founders from various tech fields resonated on a point: technology is important, but the organizational structure of a company is equally crucial. New technologies require new organizational forms.
+
+This made me start thinking that perhaps the first principles of AI need to be discussed on a bigger picture. 
+For instance, AI models and data themselves should follow the aforementioned first principles, but the pipelines for models and data also have their own first principles. Teams and companies developing models should be designed around these principles. 
+The term "information volume" in the context of data collection pipelines might refer to the quality, quantity, and flow speed of user feedback information. 
+For teams, the capabilities built around "information volume" might involve exceptional user operation abilities and iteration capabilities.
+
+Besides, I can't help but marvel that the release of effective linear attention, which performs on par with the conventional attention mechanisms, at the Link Day could be a seemingly ordinary but very significant turning point in human technology. 
+Soon, we might have billions of tokens of effective contexts, and at that time, science and civilization will usher in a new explosive era with the help of AI. 💥
+
 ## Metadata
 
-Version: 0.2.0
+Version: 0.3.0
 
 Date: 2024-02-19
 
@@ -716,3 +738,5 @@ License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 2024.03.18: Update a bit of wording
 
 2024.05.09: Add reference to Octopus V2
+
+2024.08.31: Add the updates on MiniMax Link Day

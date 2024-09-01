@@ -68,7 +68,7 @@ Currently, many people speak highly of agents, as if they can solve numerous pro
 Based on these three major components, we implement guardrails and benchmark each component:
 
 1. Foundation Model: Various alignments and benchmarks.
-    * Notably, benchmarks include [HashHop](https://github.com/magicproduct/hash-hop) and various metrics proposed by Zhu Zeyuan in _Physics of Language Models_.
+    * Notably, benchmarks include [HashHop](https://github.com/magicproduct/hash-hop) and various metrics proposed by Zeyuan Allen Zhu in _Physics of Language Models_.
 2. Auxiliaries:
     * For tool usage, there are various engineering safety practices (such as authorization, sandboxing, etc.) and relevant benchmarks.
     * For memory, we can directly introspect the content of the memory or allow the model to retrospect; however, benchmarks for memory seems to be still immature.

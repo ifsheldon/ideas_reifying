@@ -421,6 +421,12 @@ Models can become products, and product needs can also drive model development, 
 An example is ControlNet. Originally, SD could only generate images guided by text, but actual needs demanded more, such as generating refined images based on sketches. This necessity inevitably forced model development.
 Another excellent example is Snapchat AI filters. This well-known example has been extensively analyzed, so I won't elaborate further.
 
+> Update (2024.10.09):
+> 
+> Another great example is [ChatGPT Canvas](https://openai.com/index/introducing-canvas/). In the announcement, OpenAI mentioned that to develop the core behaviors, like triggering the canvas, rewriting documents and making targeted edits, they used new data techniques, like "distilling outputs from OpenAI o1-preview", to further finetune the GPT4o model.
+> 
+> In other words, to enable Canvas, they not only implemented a lot of engineering code, but also heavily modified the GPT4o model itself!
+
 When a model's capabilities can solve specific problems, the model becomes a product. Conversely, if existing model capabilities are insufficient to solve a particular problem, we can start from the need, develop a new model, and embed the capabilities into the model.
 If the problem is valuable enough or widespread enough, according to AI's first principles, embedding capabilities directly into the model, instead of assembling and integrating existing AI components, can achieve a higher capability ceiling and create more value.
 
@@ -740,3 +746,5 @@ License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 2024.05.09: Add reference to Octopus V2
 
 2024.08.31: Add the updates on MiniMax Link Day
+
+2024.10.09: Add the update about ChatGPT Canvas

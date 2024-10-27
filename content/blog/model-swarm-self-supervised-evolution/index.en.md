@@ -228,7 +228,9 @@ Dynamic Utility Functions (DUF) may pragmatically solve a question that’s been
 
 Or, equivalently “what is the eval set for an artificial superintelligence?”
 
-With a dynamic utility function that is constantly evolving, we might resort to the answer “We don’t definitely know, but we can always improve our utility function and then the intelligence will adapt”
+With a DUF that is constantly evolving, we might resort to the answer “We don’t definitely know, but we can always improve our utility function and then the intelligence will adapt”.
+
+> Yet, the effectiveness of DUF is still unclear, as the authors didn't experiment with it in the paper.
 
 ### Self-supervised Evolution
 
@@ -240,7 +242,7 @@ I think the combination of Model Swarm, SSFT and DUF can be the next big thing i
 
 Giant companies are burning billions of dollars to develop next AIs. As a computer scientist, I understand why they have to technically centralize compute power, but I don’t like the cyberpunk future. 
 Also, this centralization and synchronization seems unnatural to me, since this is not how nature works. 
-Nature runs in asynchrony and nature is a distributed system. With the techniques from Model Swarm, AIs can be again tuned on-device and the world they see is more complete and dynamic. I hope AI can be unchained from racks of servers, helping individuals to break theirs too.
+Nature runs in asynchrony and nature is a distributed system. With the techniques from Self-supervised Evolution, AIs can be again tuned on-device and the world they see is more complete and dynamic. I hope AI can be unchained from racks of servers, helping individuals to break theirs too.
 
 ## Acknowledgement
 

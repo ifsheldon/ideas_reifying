@@ -1,6 +1,6 @@
 +++
-title = "Self-supervised Finetune Model Swarm to AGI"
-description = "Self-supervised Finetuning and Model Swarm will unlock the next-gen of AI training"
+title = "Self-supervised Evolution: From Model Swarm to AGI"
+description = "Self-supervised Finetuning, Model Swarm and Dynamic Utility Function will unlock the next-gen of AI training"
 draft = false
 
 weight = 9
@@ -222,13 +222,19 @@ While in the paper 𝑓 is static, it can dynamically evolve just like the evolu
 This is naturally analogous to humans. Optimization landscape is shaped by 𝑓, so when 𝑓 changes, the optimization landscape reshapes and the inhabitants (i.e., experts) unsettle. Similarly, we humans gradually inhabit new places when natural landscape changes over decades. 
 And natural selection's "fitness function" isn't static but changes with environmental conditions. In contrast, it's neither effective nor helpful to change eval set when a model is under gradient-based training.
 
-Dynamic Utility Functions may pragmatically solve a question that’s been haunting many (including me):
+Dynamic Utility Functions (DUF) may pragmatically solve a question that’s been haunting many (including me):
 
 > What do we do when we run out of eval sets or benchmarks?
 
 Or, equivalently “what is the eval set for an artificial superintelligence?”
 
 With a dynamic utility function that is constantly evolving, we might resort to the answer “We don’t definitely know, but we can always improve our utility function and then the intelligence will adapt”
+
+### Self-supervised Evolution
+
+I think the combination of Model Swarm, SSFT and DUF can be the next big thing in training AIs, so I term it Self-supervised Evolution, emphasizing the importance of self-supervised learning and the dynamic evolution nature of Model Swarm.
+
+> Self-supervised Evolution = Model Swarm + Self-supervised Finetuning + Dynamic Utility Function
 
 ## Ending
 

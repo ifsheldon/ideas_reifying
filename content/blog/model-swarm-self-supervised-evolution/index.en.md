@@ -24,7 +24,7 @@ However, their training objectives may be too niched and not align with ours, so
 
 We need to somehow factor out the useful directions from these LoRA vectors. “useful” means improving the performance on _our_ eval set.
 
-Then, by coincidence, just a day later, I came across this [Model Swarm](https://arxiv.org/abs/2410.11163) paper. This is what I am going to discuss in the blog, not our law agent ambition.
+Just a day later, by coincidence, I came across the [Model Swarm](https://arxiv.org/abs/2410.11163) paper. This is what I am going to discuss in the blog, not our law agent ambition.
 
 With a few extensions, I believe the techniques in the paper can transform how we (post-)train AI models.
 
@@ -92,15 +92,15 @@ Below are what I consider as key points that worth more highlights (in ***bold i
 
 ![pseudo-algorithm](./pseudo-algorithm.png)
 
-Upon reading it, with a basic understanding, two questions arose:
+Upon reading it, with a basic understanding, two questions came to my mind:
 
 * How does it synchronize the optimization?
 * Where are gradients?
 
-It turns out that these two are very helpful for understanding it and extrapolating it.
+It turns out that these two are very helpful for understanding the algorithm and extrapolating it.
 
 In essence, with a bit radical simplification, this algorithm scatters particles (different LLM experts)  onto the optimization landscape (i.e., the high-dimensional parameter space). The height of the landscape is given by the utility function 𝑓. 
-In each iteration, every particle is evaluated by height. Everyone is led towards the current highest one **g**, which is the current global best, also considering their path and the current global worst **g_w**.
+In each iteration, every particle is evaluated by height. Every one is led towards the current highest one **g**, which is the current global best, also considering their path and the current global worst **g_w**.
 
 This is very similar to backpropagation or gradient-based optimization, but ***there is no gradient***. Wellknown is that in distributed training, backpropagation incurs a lot of synchronization overhead, which is perhaps the biggest problem in scaling a model and training process.
 
@@ -140,6 +140,7 @@ So, besides the highlights in the abstract, the paper also features:
 
 * Gradientless Optimization
 * A few SPs that can be (partially) mitigated, which might enable distributed asynchronous training
+* A mechanism to factor out generally useful weight updates while filtering out specialization noise
 * Reaffirmation of the generalizability of LLMs from specifics
 
 What’s the big deal? Let’s take some examples, which are likely to evolve into AGI!
@@ -219,7 +220,7 @@ But it’s *more* than any of these:
 Our world is constantly changing. I don’t think a world model can be AGI if it cannot adapt to the dynamics of our world. So, it requires lifelong learning capabilities - arguably as crucial a goal as achieving static artificial superintelligence.
 
 While in the paper 𝑓 is static, it can dynamically evolve just like the evolution itself. For example, if 𝑓 is eval set performance measure, we can gradually introduce new a eval set by setting weights, thus selecting new role-models and anti-role-models to “lead” experts to explore new space. 
-This is naturally analogous to humans. Optimization landscape is shaped by 𝑓, so when 𝑓 changes, the optimization landscape reshapes and the inhabitants (i.e., experts) unsettle. Similarly, we humans gradually inhabit new places when natural landscape changes over decades. 
+This is naturally analogous to human behaviors. Optimization landscape is shaped by 𝑓, so when 𝑓 changes, the optimization landscape reshapes and the inhabitants (i.e., experts) unsettle. Similarly, we humans gradually inhabit new places when natural landscape changes over decades. 
 And natural selection's "fitness function" isn't static but changes with environmental conditions. In contrast, it's neither effective nor helpful to change eval set when a model is under gradient-based training.
 
 Dynamic Utility Functions (DUF) may pragmatically solve a question that’s been haunting many (including me):
@@ -228,9 +229,9 @@ Dynamic Utility Functions (DUF) may pragmatically solve a question that’s been
 
 Or, equivalently “what is the eval set for an artificial superintelligence?”
 
-With a DUF that is constantly evolving, we might resort to the answer “We don’t definitely know, but we can always improve our utility function and then the intelligence will adapt”.
+With a DUF that is constantly evolving, we might resort to the answer “We don’t definitely know, but we can always improve our utility function and then the intelligence will align with it”.
 
-> Yet, the effectiveness of DUF is still unclear, as the authors didn't experiment with it in the paper.
+> Yet, the effectiveness of DUF is still unclear, as the authors didn't experiment with it in the paper. This is solely my idea.
 
 ### Self-supervised Evolution
 
@@ -242,16 +243,22 @@ I think the combination of Model Swarm, SSFT and DUF can be the next big thing i
 
 Giant companies are burning billions of dollars to develop next AIs. As a computer scientist, I understand why they have to technically centralize compute power, but I don’t like the cyberpunk future. 
 Also, this centralization and synchronization seems unnatural to me, since this is not how nature works. 
-Nature runs in asynchrony and nature is a distributed system. With the techniques from Self-supervised Evolution, AIs can be again tuned on-device and the world they see is more complete and dynamic. I hope AI can be unchained from racks of servers, helping individuals to break theirs too.
+Nature runs in asynchrony and nature is a distributed system. 
+
+With the techniques from Self-supervised Evolution, AIs could be again tuned on-device. The world they, as a whole, see is more complete and dynamic. I hope AI can be unchained from racks of servers, helping individuals to break theirs too.
 
 ## Acknowledgement
 
-Special thanks to Claude for the summary, reviewing this blog and giving insightful ideas.
+Special thanks to Claude for the summary, reviewing this blog and giving insightful ideas!
 
 ## Metadata
 
-Version: 0.0.1
+Version: 0.0.2
 
-Date: 2024.10.27
+Date: 2024.10.28
 
 License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+
+### Changelogs
+
+2024.10.28: A few wording changes

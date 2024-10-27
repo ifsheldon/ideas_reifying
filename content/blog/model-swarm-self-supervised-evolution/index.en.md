@@ -88,7 +88,7 @@ Also quoting the authors’ abstract:
 
 When I finished reading the paper, my feeling was although the abstract practically summarizes authors’ contribution, it understates some key points that may be of greater impact when extrapolated from large language models (LLMs).
 
-Below are what I consider as key points that worth more highlights (in ***bold italics***).
+Below are what I consider as key points that worth more highlights (in the following paragraphs in ***bold italics***).
 
 ![pseudo-algorithm](./pseudo-algorithm.png)
 
@@ -119,11 +119,11 @@ Leaving aside synchronization, however, the authors inadvertently tackle SP.1 an
 1. ***Dropout-K/N***:
 
    Quoting “randomly skipping model evaluation in *d_k* % of iterations or for *d_n* % of experts”. This effectively simulates that *d_k* % of iterations are out of sync and that  *d_n* % of experts are out of sync. Their results, translated in terms of synchronization, indicate that even if
-   synchronization is not guaranteed, there are still improvements, which gives us some hope that maybe, even if all experts were updated asynchronously, they could still contribute to the whole.
+   synchronization of a model swarm is not guaranteed, there are still improvements, which gives us some hope that maybe, even if all experts were updated asynchronously, they could still contribute to the whole.
 
 2. ***Token Swarms***:
 
-   The authors want to generalize the method to experts with different architectures, but they unintentionally attack SP.2 in the meantime. Instead of exchanging the full weights of the role-model and anti-role-model, the token swarm matrices are exchanged, which manipulate the next-token
+   The authors wanted to generalize the method to experts with different architectures, but they unintentionally attacked SP.2 in the meantime. Instead of exchanging the full weights of the role-model and anti-role-model, the token swarm matrices are exchanged, which manipulate the next-token
    probability distributions of experts. These matrices have a lot fewer parameters, which makes the synchronization a lot cheaper, at the cost of less improvement though.
 
 From the technical perspective, SP.3 is trivial to solve. We can assume every distributed nodes, which optimize different experts locally, to be trustworthy ones that compute 𝑓 locally and report the scores to everyone.

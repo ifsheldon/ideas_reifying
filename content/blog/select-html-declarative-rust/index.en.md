@@ -79,6 +79,39 @@ Now you can use `&`, `|`, `!` and of course `()` to compose your query. If you p
     * These are transformed into Polars expressions in `std::ops::{BitAnd, BitOr, Not}` implementations.
     * For details of Polars expressions, see [`polars_plan::dsl`](https://docs.rs/polars-plan/latest/polars_plan/dsl/index.html).
 
+For example:
+```html
+<div class="a b">
+    <div class="c d">
+        <p> Hello </p>
+    </div>
+    <div class="e" id="f">
+        <p> World </p>
+    </div>
+</div>
+```
+
+This HTML file, after parsing and building the `HTMLIndex`, will give us a Polas dataframe like this:
+
+| NODE_ID | TAG | CLASS | ID |
+| :-----: | :-: | :---: | :-: |
+| 0       | div | [a, b] |    |
+| 1       | div | [c, d] |    |
+| 2       | p   | []     |    |
+| 3       | div | [e]    | f  |
+| 4       | p   | []     |    |
+
+
+If we query components with `class("a") | class("c")`, the resulting Polars expression is essentially generated like this:
+
+```rust
+use polars::prelude::Expr;
+
+let class_a_expr: Expr = col("CLASS").list().contains(lit("a"));
+let class_c_expr: Expr = col("CLASS").list().contains(lit("c"));
+let query_expr: Expr = class_a_expr.or(class_c_expr); // this will be used to filter the dataframe
+```
+
 Simple and clean, it serves its purpose.
 
 ## Future Work

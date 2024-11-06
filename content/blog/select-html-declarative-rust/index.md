@@ -94,10 +94,10 @@ for id in node_ids {
 
 | NODE_ID | TAG | CLASS | ID |
 | :-----: | :-: | :---: | :-: |
-| 0       | div | [a, b] |    |
-| 1       | div | [c, d] |    |
+| 0       | div | [ "a", "b" ] |    |
+| 1       | div | [ "c", "d" ] |    |
 | 2       | p   | []     |    |
-| 3       | div | [e]    | f  |
+| 3       | div | [ "e" ]    | "f"  |
 | 4       | p   | []     |    |
 
 如果我们用 `class("a") | class("c")` 这个语句来查询组件，本质上生成的 Polars 表达式是：

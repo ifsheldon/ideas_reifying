@@ -95,10 +95,10 @@ This HTML file, after parsing and building the `HTMLIndex`, will give us a Polas
 
 | NODE_ID | TAG | CLASS | ID |
 | :-----: | :-: | :---: | :-: |
-| 0       | div | [a, b] |    |
-| 1       | div | [c, d] |    |
+| 0       | div | [ "a", "b" ] |    |
+| 1       | div | [ "c", "d" ] |    |
 | 2       | p   | []     |    |
-| 3       | div | [e]    | f  |
+| 3       | div | [ "e" ]    | "f"  |
 | 4       | p   | []     |    |
 
 

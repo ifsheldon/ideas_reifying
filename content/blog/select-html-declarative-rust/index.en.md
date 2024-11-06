@@ -13,6 +13,8 @@ feature_image = "declarative.png"
 feature = true
 +++
 
+> 中文版请见[链接](@/blog/select-html-declarative-rust/index.md)
+
 As a LLM engineer and a sloppy frontend newbie, I don't really know much about CSS, but I do need to crawl some web pages and turn them into a knowledgebase for my LLM agents. So, I thought, I'm going to do this in my favorite language, Rust :)
 
 After some research, I found [`scraper`](https://github.com/rust-scraper/scraper), which parses HTML files. We can also select the HTML components with CSS selectors with it. Simple and easy, but wait, what's CSS selector? I just want to remove some components, like `<meta>`, `<script>` and `<div>` that is class `promotion`.

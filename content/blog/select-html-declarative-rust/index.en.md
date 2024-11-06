@@ -21,7 +21,7 @@ Here come some fun facts:
  
 A component, say `<div>` that has two classes `a` and `b` in HTML is written as `<div class="a b"></div>`. But how can you select it with CSS? It's written as `div.a.b`! That seems a bit weird to a guy like me who got used to object-oriented dot notations. But OK, these are just conventions, I can work with them.
 
-How about selecting a `<div>` that is either class `a` or `b` in CSS? It's written as `div.a, div.b`. My GitHub Copilot actually gave me multiple other options when completing the last sentence!
+How about selecting a `<div>` that is either class `a` or `b` in CSS? It's written as `div.a, div.b`. My GitHub Copilot even gave me multiple other options when completing the last sentence!
 
 Things get a bit complicated when I actually take a closer look at my HTML files. I need to select and remove:
 1. `<div>` that is either class `promotion` or `ads`
@@ -29,7 +29,7 @@ Things get a bit complicated when I actually take a closer look at my HTML files
 3. `<a>` that is not class `link-to-documentation`
 4. `<p>` that is `misc` _unless_ it is also class `documentation`
 5. all the components that are one of `[li, ol, ul ...]`
-6. ........ this numbered list went a bit long, so I don't want to list it all.
+6. ........ this list went a bit long, so I don't want to list it all.
 
 How can I write CSS selectors to describe what I want? Also, I'd like to update these criteria programmatically, which means I have to do string manipulation that is essentially scrappy meta programming. 
 I actually **did** it! But it's just painful when you embed a DSL inside a language in the form of strings.
@@ -37,14 +37,14 @@ I actually **did** it! But it's just painful when you embed a DSL inside a langu
 > Yes, I know this is kind of the norm to use CSS to select HTML components, and I believe there are good reasons. I know crates like [dom_query](https://docs.rs/dom_query/latest/dom_query/) are super useful. 
 > But I really want to focus on ergonomics and simplicity, not performance or curiosity about CSS.
 
-So, let's forget CSS for now. We have some HTML components, which have some properties, like its name, class and id. We want to select some of them based on some logics. It sounds like we just need a query engine. Or, a SAT solver (no, it's a joke :)
+So, let's forget CSS for now. We have some HTML components, which have some properties, like its name, class and id. We want to select some of them based on some logics. It sounds like we just need a query engine. Or more precisely, a SAT solver (no, it's a joke :)
 
 ## Let's think declaratively
 
-I think we are pretty used to booleans. If naming is done right, logic expressions can be pretty declarative and literate. For instance, `component.is_div() && component.is_class("a")` seems quite readable. 
+I think we are pretty used to booleans. If naming is done right, logic expressions can be pretty declarative, literate and readable like sentences. For instance, `component.is_div() && component.is_class("a")` seems quite readable. 
 However, this object-oriented style of APIs doesn't fit with the design of `scraper`. Working with `scraper`, we manipulate the HTML file and its components with `Node` and `NodeId`, which help us index into the tree structure.
 
-Despite that, we can make a query more declarative. Instead of `div.a.b`, we can write `Tag::Div & class("a") & class("b")`. You can almost read the logic as a sentence.
+Despite that, we can make a query more declarative. Instead of `div.a.b`, we can write `Tag::Div & class("a") & class("b")`. We can almost read the logic as a sentence.
 
 This is what [`scraper_query`](https://crates.io/crates/scraper_query) allows. The complete sample is
 
@@ -63,9 +63,9 @@ for id in node_ids {
 }
 ```
 
-Now you can use `&`, `|`, `!` and of course `()` to compose your query. If you prefer to be even more explicit, you can do something like `Tag::Div.and(class("a").and(class("b")))`.
+Now we can use `&`, `|`, `!` and of course `()` to compose queries. If preferring to be even more explicit, we can do something like `Tag::Div.and(class("a").and(class("b")))`.
 
-> With `&`, `|`, `!`, this little DSL disguised in Rust logic expressions is Turing-complete!
+> With `&`, `|`, `!`, this tiny DSL disguised in Rust logic expressions is Turing-complete!
 
 
 ## Under the hood

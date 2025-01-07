@@ -690,9 +690,9 @@ Along my way stumbling through the WASIp2 tutorials, documentations and examples
     * [Bindgen improvement: Remove the use of async_trait](https://github.com/bytecodealliance/wasmtime/issues/9823)
     * [Documentation: Wrong doc about Config::wasm_component_model](https://github.com/bytecodealliance/wasmtime/issues/9694)
     * [Renovate host example with latest wasmtime and wasmtime_wasi](https://github.com/bytecodealliance/component-docs/issues/179)
+    * [Renovate the WASI example](https://github.com/bytecodealliance/wasmtime/issues/9777)
 * Unresolved ones, for those who may be interested in contributing:
     * [Compiled wasm32-wasip2 component from simple code requires excessive WASI interfaces](https://github.com/rust-lang/rust/issues/133235)
-    * [Renovate the WASI example](https://github.com/bytecodealliance/wasmtime/issues/9777)
     * [Bindgen! gives weird name to an interface well-named in WIT file](https://github.com/bytecodealliance/wasmtime/issues/9774)
 
 As WASIp2 technologies are rather young, if you find WASIp2 is interesting, please consider contributing code and/or documentation to the related WASIp2 projects, like [wasmtime](https://github.com/bytecodealliance/wasmtime)
@@ -869,8 +869,12 @@ This code example should give you a sense of how to implement a host and a guest
 
 ## Metadata
 
-Version: 0.0.1
+Version: 0.0.2
 
 Date: 2025.01.01
 
 License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+
+### Changelog
+
+2025.01.08: Updated tracking issues

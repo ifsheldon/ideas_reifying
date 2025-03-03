@@ -119,7 +119,7 @@ world adder {
 }
 ```
 
-`wasi-mindmap` is the namespece for this package, `interfaced-adder` the name of this package. When we refer to a package, we usually refer it with its package ID, `wasi-mindmap:interfaced-adder` in our case. A package ID can optionally include a semver-compliant version,
+`wasi-mindmap` is the namespace for this package, `interfaced-adder` the name of this package. When we refer to a package, we usually refer it with its package ID, `wasi-mindmap:interfaced-adder` in our case. A package ID can optionally include a semver-compliant version,
 `wasi-mindmap:interfaced-adder@0.0.1` for example.
 
 In this package, we define a world `adder` for adder implementations. This world exports only one interface named `add`. The interface defines only one item, a function named `add`. Of course, in a world, we can import and export more interfaces.
@@ -129,7 +129,7 @@ Since this is just a tutorial, not a book, we won't dig into [the WIT specificat
 
 ## More Code
 
-For the purpose of demostration, I will write programs in Python and Rust. These two are my favorite, so please bear with me. As WASM is "universal", you can try to compile code in your favorite languages into components.
+For the purpose of demonstration, I will write programs in Python and Rust. These two are my favorite, so please bear with me. As WASM is "universal", you can try to compile code in your favorite languages into components.
 This [section](https://component-model.bytecodealliance.org/language-support.html) of WACMDoc shows more examples in more languages.
 
 ### Adder Components {#rust-adder-component}
@@ -418,7 +418,7 @@ If you haven't done so, compile the Rust adder component as mentioned in [Adder 
 With the Rust adder component, we need to generate Python bindings:
 
 ```shell
-# subsitude guest_adder_rs.wasm with the path to your Rust adder component
+# replace guest_adder_rs.wasm with the path to your Rust adder component
 python -m wasmtime.bindgen guest_adder_rs.wasm --out-dir adder_rs_bindings  
 ```
 
@@ -472,7 +472,7 @@ So far so good. The above examples are simple and straightforward, except that w
 2. Why does a Python component size much bigger than a Rust component?
 3. Why did we have a `interfaced_adder.wit` which is different from `adder.wit`?
 
-Before we going into these, please read through the [Overview of WIT](https://component-model.bytecodealliance.org/design/wit.html) from WACMDoc, which is prerequisite for understanding the following sections.
+Before diving into these, please read through the [Overview of WIT](https://component-model.bytecodealliance.org/design/wit.html) from WACMDoc, which is prerequisite for understanding the following sections.
 
 ![later](2000yrs.jpg)
 
@@ -522,7 +522,7 @@ wasmtime run command_component_hosting_adder.wasm
 A command component is (just special) one that exports the `wasi:cli/run` interface, and imports _only_ interfaces listed in the [`wasi:cli/command world`](https://github.com/WebAssembly/wasi-cli/blob/main/wit/command.wit), which allows it to be executed directly by wasmtime (or other `wasi:cli`
 hosts). [↪](https://component-model.bytecodealliance.org/language-support/rust.html#creating-a-command-component-with-cargo-component)
 
-For the purpose of demostration, we will create a command component in Rust, which hosts an `interfaced-adder` component.
+For the purpose of demonstration, we will create a command component in Rust, which hosts an `interfaced-adder` component.
 
 To create a command component with ease, we need some help from `cargo-component`.
 
@@ -869,7 +869,7 @@ This code example should give you a sense of how to implement a host and a guest
 
 ## Metadata
 
-Version: 0.0.2
+Version: 0.0.3
 
 Date: 2025.01.01
 

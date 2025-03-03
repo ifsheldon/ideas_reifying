@@ -292,8 +292,8 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0"
-wasmtime = "28.0"
-wasmtime-wasi = "28.0"
+wasmtime = "30.0"
+wasmtime-wasi = "30.0"
 ```
 
 Before diving into the main logics, we need some utilities:
@@ -303,22 +303,25 @@ Before diving into the main logics, we need some utilities:
 use anyhow::Context;
 use wasmtime::component::{Component, Linker, ResourceTable};
 use wasmtime::{Engine, Result, Store};
-use wasmtime_wasi::WasiImpl;
+use wasmtime_wasi::{IoImpl, IoView, WasiImpl};
 use wasmtime_wasi::{WasiCtx, WasiCtxBuilder, WasiView};
 
 // reference: https://docs.rs/wasmtime/latest/wasmtime/component/bindgen_examples/_0_hello_world/index.html
 // reference: https://docs.wasmtime.dev/examples-rust-wasi.html
 
 pub(crate) struct ComponentRunStates {
-    // These two are required basically as a standard way to enable the impl of WasiView
+    // These two are required basically as a standard way to enable the impl of WasiView and IoView
     pub wasi_ctx: WasiCtx,
     pub resource_table: ResourceTable,
 }
 
-impl WasiView for ComponentRunStates {
+impl IoView for ComponentRunStates {
     fn table(&mut self) -> &mut ResourceTable {
         &mut self.resource_table
     }
+}
+
+impl WasiView for ComponentRunStates {
     fn ctx(&mut self) -> &mut WasiCtx {
         &mut self.wasi_ctx
     }
@@ -360,8 +363,7 @@ Instances are created by instantiating a WASM module (that resides in a componen
 
 > For more details, see the documentations about [`Component`](https://docs.rs/wasmtime/latest/wasmtime/component/struct.Component.html), [`Linker`](https://docs.rs/wasmtime/latest/wasmtime/component/struct.Linker.html) and [`Store`](https://docs.rs/wasmtime/latest/wasmtime/struct.Store.html).
 
-As for `ComponentRunStates`, it contains necessary fields to implement `WasiView` trait, which is essential for interacting with the functionalities provided by `wasmtime_wasi`. Quoting the [documentation](https://docs.rs/wasmtime-wasi/latest/wasmtime_wasi/trait.WasiView.html) of `wasmtime_wasi`:
-> (This is) A trait which provides access to internal WASI state. This trait is the basis of implementation of all traits in this crate.
+As for `ComponentRunStates`, it contains necessary fields to implement `WasiView` and `IoView` traits, which are essential for interacting with the functionalities provided by `wasmtime_wasi`.
 
 If the above is a lot to take in, fear not. All you need to know for now is that all the code in `src/utils.rs` except my little helper function is basically standard to get started. You can take your time later to dig into the details of the wasmtime runtime.
 
@@ -410,7 +412,7 @@ Notwithstanding, we can still run simple components compiled from Rust programs.
 First we will need to install `wasmtime-py`:
 
 ```shell
-pip install -U "wasmtime>=28.0.0"
+pip install -U "wasmtime>=30.0.0"
 ```
 
 If you haven't done so, compile the Rust adder component as mentioned in [Adder Component](#rust-adder-component).
@@ -869,7 +871,7 @@ This code example should give you a sense of how to implement a host and a guest
 
 ## Metadata
 
-Version: 0.0.3
+Version: 0.1.0
 
 Date: 2025.01.01
 
@@ -878,3 +880,5 @@ License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 ### Changelog
 
 2025.01.08: Updated tracking issues
+
+2025.03.03: Updated to `wasmtime >= 30.0` and fixed typos

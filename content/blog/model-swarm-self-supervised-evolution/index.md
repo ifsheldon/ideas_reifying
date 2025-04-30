@@ -3,7 +3,7 @@ title = "自监督进化：从模型群体到通用人工智能"
 description = "自监督微调、模型群体 (Model Swarm) 和动态效用函数会是下一代 AI 训练方式"
 draft = false
 
-weight = 11
+weight = 12
 
 [taxonomies]
 tags = ["AI"]

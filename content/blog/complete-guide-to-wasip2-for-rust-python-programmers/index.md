@@ -3,7 +3,7 @@ title = "WASIp2 指南 - 面向 Rust 和 Python 程序员"
 description = "一个真正通用的运行时的指南"
 draft = false
 
-weight = 10
+weight = 11
 
 [taxonomies]
 tags = ["Rust", "WebAssembly", "WASI"]

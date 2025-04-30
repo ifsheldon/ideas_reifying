@@ -3,7 +3,7 @@ title = "Self-supervised Evolution: From Model Swarm to AGI"
 description = "Self-supervised Finetuning, Model Swarm and Dynamic Utility Function will unlock the next-gen of AI training"
 draft = false
 
-weight = 11
+weight = 12
 
 [taxonomies]
 tags = ["AI"]

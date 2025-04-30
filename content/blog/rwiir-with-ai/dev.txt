@@ -1,0 +1,160 @@
+# Development Plan for Oxidizing React Portfolio to Dioxus
+
+## Overview
+
+This document outlines the step-by-step process for completely rewriting the React-based portfolio as a Rust-based Dioxus application. The goal is to preserve all content and styling from the original site while implementing it in Dioxus. The existing template code in the portfolio-rs directory can be discarded as it only demonstrates the Dioxus APIs.
+
+## Prerequisites
+
+- Rust installed (minimum version: latest stable)
+- Cargo installed
+- dioxus-cli installed via:
+  ```
+  cargo binstall dioxus-cli
+  ```
+
+## Project Structure
+
+Create a new Dioxus project structure:
+- `portfolio-rs/`: Root directory of the Dioxus project
+  - `src/`: Source code
+    - `components/`: Reusable UI components
+    - `views/`: Route-based views and layouts
+    - `data/`: Data structures and loaders
+    - `main.rs`: Application entry point
+  - `assets/`: Static assets (images, CSS, etc.)
+  - `Cargo.toml`: Rust project configuration
+  - `Dioxus.toml`: Dioxus-specific configuration
+
+## Phase 1: Analysis of Original Site
+
+1. **Content Inventory**
+   - Catalog all pages and their content
+   - Document the component hierarchy
+   - Map data structures and state management patterns
+
+2. **Style Inventory**
+   - Identify all stylesheets and design tokens
+   - Document responsive design patterns
+   - Extract color schemes, typography, and layout patterns
+
+## Phase 2: Setup and Configuration
+
+1. **Initialize Project**
+   - Create a clean Dioxus project (discard the existing template code)
+   - Modify project configuration files
+
+2. **Setup Dependencies**
+   - Configure `Cargo.toml` with all necessary dependencies:
+   ```toml
+   [dependencies]
+   dioxus = { version = "0.6.0", features = ["router", "web"] }
+   dioxus-router = "0.6.0"
+   serde = { version = "1.0", features = ["derive"] }
+   serde_json = "1.0"
+   log = "0.4"
+   wasm-logger = "0.2"
+   ```
+
+3. **Asset Management**
+   - Set up asset directory structure
+   - Configure static file handling
+   - Create CSS structure (no Tailwind)
+
+## Phase 3: Data Layer Implementation
+
+1. **Convert Data Structures**
+   - Transform `portfolio.js` into Rust structs using Serde
+   - Convert `projects.json` to Rust data structures
+   - Implement data loading and management
+
+2. **State Management**
+   - Implement global state using Dioxus patterns
+   - Create reactive data providers where needed
+
+## Phase 4: Component Architecture
+
+1. **Design System Implementation**
+   - Create core UI components that match the original design
+   - Implement layouts and containers
+   - Build reusable UI elements (buttons, cards, etc.)
+
+2. **Layout Components**
+   - Implement main layout with header/footer
+   - Create responsive containers
+
+## Phase 5: Page Implementation
+
+1. **Routing Structure**
+   - Define route enum matching the original site's URL structure
+   - Implement router configuration
+
+2. **Page Components**
+   - Recreate each page while maintaining the original look and feel:
+     - Home page
+     - Experience/Career page
+     - Education page
+     - Projects page
+     - Contact page
+     - Error page
+
+3. **Interactive Elements**
+   - Implement all interactive components
+   - Recreate animations and transitions
+
+## Phase 6: Styling Implementation
+
+1. **CSS Structure**
+   - Create pure CSS implementations of all styles
+   - Maintain responsive design patterns
+   - Ensure visual consistency with the original site
+
+2. **Asset Integration**
+   - Integrate all images, icons, and other assets
+   - Optimize for performance
+
+## Phase 7: Testing and Refinement
+
+1. **Visual Comparison**
+   - Compare screenshots of original and new implementation
+   - Ensure pixel-perfect recreation of layouts
+
+2. **Functionality Testing**
+   - Test all interactive elements
+   - Verify routing and navigation
+   - Test responsive behavior
+
+3. **Performance Optimization**
+   - Optimize rendering and asset loading
+   - Minimize bundle size
+
+## Phase 8: Build and Deployment
+
+1. **Development Environment**
+   - Development mode with hot reloading:
+   ```
+   dx serve
+   ```
+
+2. **Production Build**
+   - Optimize for production:
+   ```
+   dx build --release
+   ```
+
+3. **Deployment**
+   - Configure deployment to match current hosting (GitHub Pages, etc.)
+   - Ensure proper asset paths and routing
+
+## Implementation Notes
+
+- **Complete Rewrite Approach**: This is not a port-by-port migration but a complete rewrite using Dioxus patterns
+- **Content Preservation**: All content, text, images, and functionality should be preserved
+- **Visual Consistency**: The final result should be visually indistinguishable from the original
+- **Dioxus Patterns**: Use idiomatic Dioxus approaches rather than trying to directly translate React patterns
+
+## Resources
+
+- Dioxus Documentation: [dioxuslabs.com/learn/0.6/](https://dioxuslabs.com/learn/0.6/)
+- Dioxus Examples: `portfolio-rs/dioxus_docsite`
+- Dioxus Router Documentation: [dioxuslabs.com/learn/0.6/router/intro](https://dioxuslabs.com/learn/0.6/router/intro)

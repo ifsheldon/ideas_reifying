@@ -21,7 +21,7 @@ As a fan of Rust, I wanted to rewrite it in Rust, but it has 4K lines of JS and 
 
 Before getting into the story, here is a quick announcement: The oxidized codebase of my portfolio website is opensourced as [hack-portfolio](https://github.com/ifsheldon/hack-portfolio). It is powered by [Dioxus](https://dioxuslabs.com).
 And I _manually_ refactored the code so that it is hackable. By "hackable", I mean the codebase is structured and uses no black magics. You can easily customize it with your own content, style and UI components.
-It's a great scaffold and starting point for Rustaceans ❤ to develop their own portfolio websites. Please feel free to file issues and/or make PRs!
+It's a great scaffold and starting point for Rustaceans ♥️ to develop their own portfolio websites. Please feel free to file issues and/or make PRs!
 
 Back to the story. The old codebase uses plain CSS and Javascript with React. These technologies are well learned by any good LLMs. However, Dioxus, the Rust frontend framework I chose, is rather young, and it is making a lot of breaking changes in their rapid development.
 Even if the LLMs behind Devin know about Dioxus, the knowledge is likely outdated. So, one preparation I made is to pull the source code of Dioxus documentation and make it a submodule.

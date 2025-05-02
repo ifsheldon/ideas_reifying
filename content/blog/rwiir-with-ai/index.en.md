@@ -79,3 +79,11 @@ Besides such an experience, I know more about the subtle limitations of current 
 * Before starting the work, try to think about what AI does not know or the knowledge that may be outdated. Explicitly ask AI to refer to documentation.
 * Always explicitly ask AI to validate their outcome and find issues early. For example, "Run cargo check every time you finish one piece of work" or "Compare the UIs and fix issues"
 * For now, AI is not going to give you perfect results end-to-end. You should expect that sometimes they get stuck, and you should fix some issues yourself.
+
+## Metadata
+
+Version: 0.0.1
+
+Date: 2025.04.30
+
+License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)

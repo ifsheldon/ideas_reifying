@@ -74,7 +74,7 @@ v.print();
 assert!(!v.allclose(&v_copy, 1e-5, 1e-5, false));
 ```
 
-Compared to a few lines of the PyTorch equivalent code (which is too trivial to be written down here), we need more verbosity, but that's the price we need to pay in exchange for some help from a powerful type checker. Having said that, I believe the APIs can be cleaner. According to `tch-rs`, these APIs are ???? from ????, so maybe we should just spend a bit more time and effort to design APIs, making them feel more Rusty.
+Compared to a few lines of the PyTorch equivalent code (which is too trivial to be written down here), we need more verbosity, but that's the price we need to pay in exchange for some help from a powerful type checker. Having said that, I believe the APIs can be cleaner. According to `tch-rs`, these APIs are generated from [ocaml-torch](https://github.com/LaurentMazare/ocaml-torch), so maybe we should just spend a bit more time and effort to design APIs, making them feel more Rusty.
 
 ### More on Parallelism
 
@@ -181,7 +181,7 @@ pub struct VarStore {
 
 there's a `Arc<Mutex<Variables>>` which may serve as a "GIL" for tensors stored in a `VarStore`. I didn't have time to dig into that further, but I think it's worth investigating. 
 
-As the documentation of `tch-rs` mention that "the code generation part for the C api on top of libtorch comes from ocaml-torch", probably this lock is necessary in the OCaml bindings, but we don't know whether PyTorch's APIs overfit Python with GIL too much to be safe to call without locks. Would be nice if an expert in PyTorch internals can share some insights in [my issue in tch-rs repo](https://github.com/LaurentMazare/tch-rs/issues/966).
+As the documentation of `tch-rs` mention that "the code generation part for the C api on top of libtorch comes from ocaml-torch", probably this lock is necessary only in the OCaml bindings, but we don't know whether PyTorch's APIs overfit Python with GIL too much to be safe to call without locks. Would be nice if an expert in PyTorch internals can share some insights in [my issue in tch-rs repo](https://github.com/LaurentMazare/tch-rs/issues/966).
 
 ## Some Thoughts
 

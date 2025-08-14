@@ -1,6 +1,6 @@
 +++
-title = "Scientific Computing in Rust with PyTorch"
-description = "Just use PyTorch in Rust"
+title = "Scientific Computing in Rust"
+description = "Just use PyTorch in Rust for now"
 draft = false
 
 weight = 10

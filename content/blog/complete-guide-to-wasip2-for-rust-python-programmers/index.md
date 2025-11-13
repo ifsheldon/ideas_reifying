@@ -13,7 +13,6 @@ feature_image = "bottled_rust.png"
 feature = true
 +++
 
-
 长久以来，程序员一直梦想着一个统一所有语言和平台的通用运行时。任何对这个运行时编译的程序都可以在任何平台上运行，无需任何修改。一个（虚拟）机器就能运行所有程序。说到虚拟机，我首先想到的"通用运行时"是 Java 虚拟机 (JVM)。如果你有不同技术背景，你可能会想到 .NET 运行时、Beam VM，或者甚至是 JavaScript
 运行时。它们都很成功且被广泛使用，但它们还是不够通用。 比如说，JVM 主要是为 Java 设计的，所以它内置了垃圾收集器，但并非所有语言都需要。我最爱的 Rust 就不需要垃圾收集，而我也同样喜欢 Python，但是它的垃圾回收跟 Java 有所不同。 既然浏览器无处不在，我们可以只写 JS 程序？可以，看 Electron 和 Node.js 就知道，但同时我们也知道
 JS 相比编译型语言如 C/C++/Rust 要慢一些。
@@ -31,6 +30,7 @@ WASM 只是这篇博客的一部分。在这里，我主要介绍 WebAssembly Sy
 > 我复制粘贴内容的时候，我会在段落末尾加上符号 ↪ 以链接参考，避免过多的阅读干扰。我想强调某些引用时，我会使用引号和引用部分。
 >
 > 以下是参考资料：
+>
 > - 主要来自 [WebAssembly 组件模型文档](https://component-model.bytecodealliance.org/introduction.html)（以下简称 "**WACMDoc**"），是 [CC-BY-4.0](https://github.com/bytecodealliance/component-docs/blob/main/LICENSE.md) 许可。
 > - `wit-bindgen` 的 [README 和文档](https://github.com/bytecodealliance/wit-bindgen)，是 [Apache-2.0](https://github.com/bytecodealliance/wit-bindgen/blob/main/LICENSE-APACHE) 和 [MIT](https://github.com/bytecodealliance/wit-bindgen/blob/main/LICENSE-MIT) 许可。
 > - Wasmtime 的 [文档](https://github.com/bytecodealliance/wasmtime)，是 [Apache-2.0](https://github.com/bytecodealliance/wasmtime/blob/main/LICENSE) 许可。
@@ -65,7 +65,7 @@ OK，现在我们有了这个通用虚拟机，就完了吗？还没有。
 对于一个简单的程序，我们只要将它编译为 WASM 模块并在 WASM 运行时上运行通常就足够了。所谓"简单"，我指的是可以用单一语言编写的程序，比如 Rust、C 或 Python。但一个有意思而且很实际的问题引入了更多复杂性：
 既然这些程序被编译为模块形式的通用汇编语言，我们能不能把它们组合成一个更强大的程序？
 
-> 如果你来自编译型语言，你可能了解 [链接/链接器](https://en.wikipedia.org/wiki/Linker_(computing)) 和 [应用程序二进制接口 (ABIs)](https://en.wikipedia.org/wiki/Application_binary_interface)，
+> 如果你来自编译型语言，你可能了解 [链接/链接器](<https://en.wikipedia.org/wiki/Linker_(computing)>) 和 [应用程序二进制接口 (ABIs)](https://en.wikipedia.org/wiki/Application_binary_interface)，
 > 它们大致做同样的事情，只不过程序间的通用语言是汇编代码，是用于特定处理器的，例如 x86 汇编。
 
 要进行 WASM 模块的**组合**，我们需要为 WASM 模块的接口定义一个标准。这就是 WASIp2 的用武之地。
@@ -81,7 +81,6 @@ OK，现在我们有了这个通用虚拟机，就完了吗？还没有。
 
 ![component_lego](component_lego.png)
 
->
 > 组件 A 有一个导出，与组件 B 的导入兼容。组件 C 有个导入，需要一个由组件 B 的导出满足。
 >
 > 如果我们仔细看，组件 A 的核心就是一个模块。
@@ -171,7 +170,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-wit-bindgen = "0.36"
+wit-bindgen = "0.46"
 ```
 
 有了神奇的 `wit_bindgen::generate` 宏，我们不用手写繁杂的胶水代码，而且所有实现代码都会经过我们最爱的 `rustc` 的静态检查。
@@ -202,14 +201,16 @@ export!(Adder);
 > 要检查 `.wasm` 文件等内容，可以通过 `cargo install --locked wasm-tools` 安装 `wasm-tools`，或参考[仓库](https://github.com/bytecodealliance/wasm-tools)里的信息。
 >
 > 要查看 `guest_adder_rs.wasm` 组件确实是自描述的：
+>
 > ```shell
 > $ wasm-tools component wit guest_adder_rs.wasm
 > package root:component;
-> 
+>
 > world root {
 >   export add: func(a: s32, b: s32) -> s32;
 > }
 > ```
+>
 > `guest_adder_rs.wasm` 本身包含了所有必要的导入和导出接口描述。
 
 #### Python 中的加法器 {#python-adder-component}
@@ -223,18 +224,19 @@ pip3 install componentize-py
 对于要实现 `adder` 世界导出的 Python 程序，我们可以通过以下方式生成绑定：
 
 ```shell
-componentize-py --wit-path adder.wit --world adder bindings .  # 不要漏掉最后的点
+componentize-py --wit-path adder.wit --world adder bindings ./adder
 ```
 
 这会在当前目录里生成一个名为 `adder` 的 Python 包。从 `adder` Python 包导入，你的 Python 程序会由有一个合适的抽象类来继承。
 
 ```python
-# in guest-adder.py
-import adder
+# in guest-adder.py, place it in ./adder
 
+# wit_world is generated in ./adder
+from wit_world import WitWorld
 
-# 类名必须是 `Adder`，与抽象类相同
-class Adder(adder.Adder):
+# the class MUST be named `WitWorld`, same as the abstract class
+class WitWorld(WitWorld):
     def add(self, a: int, b: int) -> int:
         return a + b
 ```
@@ -256,14 +258,14 @@ componentize-py --wit-path adder.wit --world adder componentize guest-adder -o g
 
 阅读以下内容有两种方式：
 
-* 你可以按顺序阅读，因为它从基本示例开始到更复杂的示例。
-* 或者，你可以通过查看下表跳转到你感兴趣的部分。
+- 你可以按顺序阅读，因为它从基本示例开始到更复杂的示例。
+- 或者，你可以通过查看下表跳转到你感兴趣的部分。
 
-| 主机/客户端                      | Rust 加法器 [↪](#rust-adder-component) | Python 加法器 [↪](#python-adder-component) | Rust KV数据库       |
-|-----------------------------|:------------------------------------|:----------------------------------------|:-----------------|
-| Rust 主机 [↪](#rust-host)     | ✅                                   | ✅                                       | ✅ [↪](#appendix) |
-| Python 主机 [↪](#python-host) | ✅                                   | 🛠️                                     | 🛠️              |
-| 命令组件（来自 Rust）               | ✅[↪](#command-component)            | 📌                                      | 📌               |
+| 主机/客户端                   | Rust 加法器 [↪](#rust-adder-component) | Python 加法器 [↪](#python-adder-component) | Rust KV 数据库    |
+| ----------------------------- | :------------------------------------- | :----------------------------------------- | :---------------- |
+| Rust 主机 [↪](#rust-host)     | ✅                                     | ✅                                         | ✅ [↪](#appendix) |
+| Python 主机 [↪](#python-host) | ✅                                     | 🛠️                                         | 🛠️                |
+| 命令组件（来自 Rust）         | ✅[↪](#command-component)              | 📌                                         | 📌                |
 
 ✅: 当前支持
 
@@ -281,13 +283,13 @@ componentize-py --wit-path adder.wit --world adder componentize guest-adder -o g
 # in host-rs/Cargo.toml
 [package]
 name = "host-rs"
-version = "0.1.1"
-edition = "2021"
+version = "0.5.2"
+edition = "2024"
 
 [dependencies]
 anyhow = "1.0"
-wasmtime = "30.0"
-wasmtime-wasi = "30.0"
+wasmtime = "38.0"
+wasmtime-wasi = "38.0"
 ```
 
 在深入主要逻辑之前，我们需要一些辅助工具：
@@ -297,8 +299,7 @@ wasmtime-wasi = "30.0"
 use anyhow::Context;
 use wasmtime::component::{Component, Linker, ResourceTable};
 use wasmtime::{Engine, Result, Store};
-use wasmtime_wasi::{IoImpl, IoView, WasiImpl};
-use wasmtime_wasi::{WasiCtx, WasiCtxBuilder, WasiView};
+use wasmtime_wasi::{WasiCtx, WasiCtxBuilder, WasiCtxView, WasiView};
 
 // 参考：https://docs.rs/wasmtime/latest/wasmtime/component/bindgen_examples/_0_hello_world/index.html
 // 参考：https://docs.wasmtime.dev/examples-rust-wasi.html
@@ -309,15 +310,12 @@ pub(crate) struct ComponentRunStates {
     pub resource_table: ResourceTable,
 }
 
-impl IoView for ComponentRunStates {
-    fn table(&mut self) -> &mut ResourceTable {
-        &mut self.resource_table
-    }
-}
-
 impl WasiView for ComponentRunStates {
-    fn ctx(&mut self) -> &mut WasiCtx {
-        &mut self.wasi_ctx
+    fn ctx(&mut self) -> WasiCtxView<'_> {
+        WasiCtxView {
+            ctx: &mut self.wasi_ctx,
+            table: &mut self.resource_table,
+        }
     }
 }
 
@@ -340,11 +338,11 @@ pub fn get_component_linker_store(
     Store<ComponentRunStates>,
 )> {
     let component = Component::from_file(engine, path)
-        .or_else(|_| Component::from_file(&engine, alt_path))
+        .or_else(|_| Component::from_file(engine, alt_path))
         .with_context(|| format!("Cannot find component from path: {path} or {alt_path}"))?;
-    let linker = Linker::new(&engine);
+    let linker = Linker::new(engine);
     let state = ComponentRunStates::new();
-    let store = Store::new(&engine, state);
+    let store = Store::new(engine, state);
     Ok((component, linker, store))
 }
 ```
@@ -357,7 +355,7 @@ pub fn get_component_linker_store(
 
 > 有关更多详细信息，请参阅关于 [`Component`](https://docs.rs/wasmtime/latest/wasmtime/component/struct.Component.html)、[`Linker`](https://docs.rs/wasmtime/latest/wasmtime/component/struct.Linker.html) 和 [`Store`](https://docs.rs/wasmtime/latest/wasmtime/struct.Store.html) 的文档。
 
-至于 `ComponentRunStates`，它包含了实现 `WasiView` 和 `IoView` traits 所需的必要字段，这对跟 `wasmtime_wasi` 提供的功能进行交互非常重要。
+至于 `ComponentRunStates`，它包含了实现 `WasiView` trait 所需的字段，这对跟 `wasmtime_wasi` 提供的功能进行交互非常重要。
 
 如果上面的内容太多，没关系。你现在只需要知道，除了我写的辅助函数之外，`src/utils.rs` 中的所有代码基本上都是标准的入门代码。你可以稍后慢慢深入了解 wasmtime 运行时的细节。
 
@@ -399,14 +397,14 @@ fn main() -> Result<()> {
 
 在 Python 中托管、运行组件目前支持不太全，所以我们只能运行不使用任何 [WASIp2 资源](https://component-model.bytecodealliance.org/design/wit.html#resources) 的（小部分）组件。目前这个限制，也意味着我们不能运行任何从 Python 程序编译的组件。
 
-> 更多详细信息请参考 WACMDoc 的[这一部分](https://component-model.bytecodealliance.org/language-support/python.html#running-components-from-python-applications)以及这个[问题](https://github.com/bytecodealliance/wasmtime-py/issues/197)。
+> 关注这个[问题](https://github.com/bytecodealliance/wasmtime-py/issues/309)获取更新。
 
 不过，我们还是可以运行从 Rust 程序编译的简单组件。
 
 首先我们需要安装 `wasmtime-py`：
 
 ```shell
-pip install -U "wasmtime>=30.0.0"
+pip install -U "wasmtime>=38.0.0"
 ```
 
 如果你还没有编译，需要按照 [加法器组件](#rust-adder-component) 里的步骤编译 Rust 加法器组件。
@@ -415,7 +413,7 @@ pip install -U "wasmtime>=30.0.0"
 
 ```shell
 # 将 guest_adder_rs.wasm 替换为你的 Rust 加法器组件的路径
-python -m wasmtime.bindgen guest_adder_rs.wasm --out-dir adder_rs_bindings  
+python -m wasmtime.bindgen guest_adder_rs.wasm --out-dir adder_rs_bindings
 ```
 
 它会在当前文件夹里创建一个名为 `adder_rs_bindings` 的 Python 包。
@@ -478,7 +476,7 @@ run_adder_rs_guest()
 
 让我们直接看前两个问题。
 
-根据 WACMDoc，`wasmtime-py` 目前不支持运行使用 `componentize-py` 构建的组件。
+根据[这个问题](https://github.com/bytecodealliance/wasmtime-py/issues/309)，`wasmtime-py` 目前不支持运行使用 `componentize-py` 构建的组件。
 这是因为 wasmtime-py 尚未支持资源（Resource），而使用 `componentize-py` 构建的组件总是使用资源，因为 `componentize-py` 无条件地导入了大部分 `wasi:cli` 世界。[↪](https://component-model.bytecodealliance.org/language-support/python.html#running-components-from-python-applications)
 
 解释很简单，但为什么 `componentize-py` 要无条件地导入大部分 `wasi:cli` 世界呢？
@@ -494,12 +492,12 @@ Python 自带的标准库非常庞大，所以组件大小比 Rust 组件大得�
 
 所以，编译后的组件可能会因标准库变得非常臃肿：
 
-* 从逻辑角度：
-    * 标准库可能在组件中包含未使用的代码。
-    * 标准库也可能包含我们没有明确要求但很有用的代码，比如错误处理。
-* 从接口角度：
-    * 标准库可能包含我们不需要的接口
-    * 标准库可能需要我们间接需要的接口，例如，当崩溃发生并打印错误消息时需要 stderr 接口。
+- 从逻辑角度：
+  - 标准库可能在组件中包含未使用的代码。
+  - 标准库也可能包含我们没有明确要求但很有用的代码，比如错误处理。
+- 从接口角度：
+  - 标准库可能包含我们不需要的接口
+  - 标准库可能需要我们间接需要的接口，例如，当崩溃发生并打印错误消息时需要 stderr 接口。
 
 像 Rust 这样更精简的语言也不例外。对于感兴趣的人，你可以看看 Rust 仓库中的[这个问题](https://github.com/rust-lang/rust/issues/133235)，是我提交的 :)
 这个问题的简要总结是，当使用 Rust 标准库中的一个简单功能时，比如 `format!` 宏，Rust 编译器会包含整个 `wasi:cli` 世界，其中包括在这种情况下无用的一些接口，如用于访问环境变量的 `wasi:cli/env`。
@@ -574,17 +572,17 @@ fn main() {
 我们可以做的是**组合**。我们将 `interfaced-adder` 组件与 `host-command-component` 组合形成一个新组件，该组件只导入 `wasi:cli/command` 接口，只导出 `wasi:cli/run` 接口。
 
 ![command_component](command-component.png)
->
+
 > 单个组件和组合组件的"形状"。
 >
 > 组合组件由命令行中的 `wasmtime` 运行。
->
 
 组合可以通过编程方式或者在 [wasmbuilder.app](https://wasmbuilder.app/) 上用 GUI 完成。在这里我们用可视化的方法，更加直观。
+
 > 如果你对编程方式感兴趣，可以参考[使用 WAC 组合](https://component-model.bytecodealliance.org/creating-and-consuming/composing.html#advanced-composition-with-the-wac-language)。
 
-
 ![composition](composition.png)
+
 > 使用 wasmbuilder.app 进行组合
 
 步骤很简单：
@@ -679,35 +677,35 @@ pub fn run_adder_dynamic(engine: &Engine) -> Result<()> {
 
 在我摸索 WASIp2 教程、文档和示例的过程中，我发现了一些问题和缺失的部分，有些已解决，有些未解决：
 
-* 我解决了的问题，仅供参考：
-    * [Missing examples for using bindgen! async, imports and resource in host](https://github.com/bytecodealliance/wasmtime/issues/9776)
-    * [Bindgen improvement: Remove the use of async_trait](https://github.com/bytecodealliance/wasmtime/issues/9823)
-    * [Documentation: Wrong doc about Config::wasm_component_model](https://github.com/bytecodealliance/wasmtime/issues/9694)
-    * [Renovate host example with latest wasmtime and wasmtime_wasi](https://github.com/bytecodealliance/component-docs/issues/179)
-    * [Renovate the WASI example](https://github.com/bytecodealliance/wasmtime/issues/9777)
-* 未解决的问题，对有兴趣贡献的人：
-    * [Compiled wasm32-wasip2 component from simple code requires excessive WASI interfaces](https://github.com/rust-lang/rust/issues/133235)
-    * [Bindgen! gives weird name to an interface well-named in WIT file](https://github.com/bytecodealliance/wasmtime/issues/9774)
+- 我解决了的问题，仅供参考：
+  - [Missing examples for using bindgen! async, imports and resource in host](https://github.com/bytecodealliance/wasmtime/issues/9776)
+  - [Bindgen improvement: Remove the use of async_trait](https://github.com/bytecodealliance/wasmtime/issues/9823)
+  - [Documentation: Wrong doc about Config::wasm_component_model](https://github.com/bytecodealliance/wasmtime/issues/9694)
+  - [Renovate host example with latest wasmtime and wasmtime_wasi](https://github.com/bytecodealliance/component-docs/issues/179)
+  - [Renovate the WASI example](https://github.com/bytecodealliance/wasmtime/issues/9777)
+- 未解决的问题，对有兴趣贡献的人：
+  - [Compiled wasm32-wasip2 component from simple code requires excessive WASI interfaces](https://github.com/rust-lang/rust/issues/133235)
+  - [Bindgen! gives weird name to an interface well-named in WIT file](https://github.com/bytecodealliance/wasmtime/issues/9774)
 
 由于 WASIp2 技术相对新，如果你觉得 WASIp2 有意思，可以给相关的 WASIp2 项目贡献代码和/或文档，如 [wasmtime](https://github.com/bytecodealliance/wasmtime) 和 [WebAssembly Component Model Documentation](https://github.com/bytecodealliance/component-docs)。
 
 最后，我的代码也是开源的：
 
-* [wasi_mindmap](https://github.com/ifsheldon/wasi_mindmap)：关于 WASIp2 的示例和教程集合。
-* [ideas reifying](https://github.com/ifsheldon/ideas_reifying)：这个博客网站的源码。
+- [wasi_mindmap](https://github.com/ifsheldon/wasi_mindmap)：关于 WASIp2 的示例和教程集合。
+- [ideas reifying](https://github.com/ifsheldon/ideas_reifying)：这个博客网站的源码。
 
 欢迎给我的仓库写 PR！
 
-## 个人思考、WASIp2之外还有什么
+## 个人思考、WASIp2 之外还有什么
 
 我用 WASIp2 的动机是给大型语言模型 (LLM) 和自主代理实现现代的软件互操作。LLM 和代理现在可以解决非常复杂的编码问题，并且很快它们会变得更强。但今天的软件非常分散，
 软件互操作的基础仍然是传统的 C ABI，它脆弱且危险。我想不到这些超级智能怎么能够用今天的软件互操作性解决现实世界的软件问题，因为我们人也面临同样的问题。
 
 除了可能会可能不会终结人类的 LLM 之外，我也看到了人类的一些有趣探索：
 
-* [使 WebAssembly 和 Wasmtime 更具可移植性](https://bytecodealliance.org/articles/wasmtime-portability)：这将使 `wasmtime` 能够在更多平台上运行，包括移动设备和边缘设备。
-    * 在机器人技术的用例中，使用 WASIp2，我们可以在机器人和/或其身体部件的 MCU 上运行（用不同语言编写的）组件，同时保持它们的互操作性。这可能比 [机器人操作系统 (ROS)](https://www.ros.org/) 更强大和灵活。
-* [k23](https://github.com/JonasKruckenberg/k23)：这是一个用 WebAssembly 重新构想的操作系统内核，利用 WebAssembly 的内置沙箱为运行不受信任的代码提供安全环境。使用 WASIp2，程序（包括内核）可以用任何语言编写，具有最大的互操作性和灵活性。
+- [使 WebAssembly 和 Wasmtime 更具可移植性](https://bytecodealliance.org/articles/wasmtime-portability)：这将使 `wasmtime` 能够在更多平台上运行，包括移动设备和边缘设备。
+  - 在机器人技术的用例中，使用 WASIp2，我们可以在机器人和/或其身体部件的 MCU 上运行（用不同语言编写的）组件，同时保持它们的互操作性。这可能比 [机器人操作系统 (ROS)](https://www.ros.org/) 更强大和灵活。
+- [k23](https://github.com/JonasKruckenberg/k23)：这是一个用 WebAssembly 重新构想的操作系统内核，利用 WebAssembly 的内置沙箱为运行不受信任的代码提供安全环境。使用 WASIp2，程序（包括内核）可以用任何语言编写，具有最大的互操作性和灵活性。
 
 ## 附录：更多示例 {#appendix}
 
@@ -861,8 +859,12 @@ fn main() -> Result<()> {
 
 ## 元数据
 
-版本：0.1.0
+版本：0.2.0
 
 日期：2025.04.22
 
 许可：[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+
+### 更新日志
+
+2025.11.14: 更新到最新代码

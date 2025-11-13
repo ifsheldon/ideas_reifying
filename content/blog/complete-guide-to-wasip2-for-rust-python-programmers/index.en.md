@@ -30,6 +30,7 @@ For the code in this guide, you can find the complete code in [wasi_mindmap](htt
 > When I copy and paste, I will end the very paragraphs with symbol ↪ to link the reference, avoiding excessive reading distraction. When I want to highlight some quotes, I will just use quote marks and quote sections.
 >
 > Here are the references:
+>
 > - Mostly from [The WebAssembly Component Model documentation](https://component-model.bytecodealliance.org/introduction.html) (hereafter "**WACMDoc**" for short), licensed under [CC-BY-4.0](https://github.com/bytecodealliance/component-docs/blob/main/LICENSE.md).
 > - [README and documentation](https://github.com/bytecodealliance/wit-bindgen) of `wit-bindgen`, licensed under [Apache-2.0](https://github.com/bytecodealliance/wit-bindgen/blob/main/LICENSE-APACHE) and [MIT](https://github.com/bytecodealliance/wit-bindgen/blob/main/LICENSE-MIT).
 > - [Documentation](https://github.com/bytecodealliance/wasmtime) of Wasmtime, licensed under [Apache-2.0](https://github.com/bytecodealliance/wasmtime/blob/main/LICENSE).
@@ -64,7 +65,7 @@ OK, now that we have "the one" virtual machine, is it the end of the story? Not 
 For a simple program, it is often enough to just compile it as a WASM module and run it on a WASM runtime. By "simple", I mean a program that can be written in a single language, say Rust, C or Python. But more complexity arises from a curious and practical question:
 Since these programs are compiled to a common assembly language as modules, can we compose them into a more powerful program?
 
-> If you come from compiled languages, you might know something about [linking/linker](https://en.wikipedia.org/wiki/Linker_(computing)) and [application binary interfaces (ABIs)](https://en.wikipedia.org/wiki/Application_binary_interface),
+> If you come from compiled languages, you might know something about [linking/linker](<https://en.wikipedia.org/wiki/Linker_(computing)>) and [application binary interfaces (ABIs)](https://en.wikipedia.org/wiki/Application_binary_interface),
 > which do roughly the same, except that the common assembly is something specific to processors, for example, x86 assembly.
 
 To do the **composition** of WASM modules, we need to define a standard for the interfaces of WASM modules. This is where WASIp2 comes in.
@@ -80,7 +81,6 @@ A visualized analogy is Lego blocks. Below we have three blocks (i.e., component
 
 ![component_lego](component_lego.png)
 
->
 > Component A has an export that is compatible with Component B's import. Component C requires an import satisified by Component B's export.
 >
 > Zooming in, Component A has a module as its core.
@@ -93,16 +93,16 @@ There are 5 basic concepts in WASIp2: components, interfaces, worlds, WIT and pa
 "self-describing" means components have interface descriptions inside. Physically, a component is a specially-formatted WebAssembly file. Internally, the component could include multiple traditional ("core") WebAssembly modules, and sub-components, composed via their imports and exports.
 So, for instance, the composed file of Component A, B and C is also a component. [↪](https://component-model.bytecodealliance.org/design/components.html)
 
-An **interface** describes a single-focus, composable contract, through which components can interact with each other and with hosts. Interfaces describe the *types* and *functions* used to carry out that interaction.  [↪](https://component-model.bytecodealliance.org/design/interfaces.html)
+An **interface** describes a single-focus, composable contract, through which components can interact with each other and with hosts. Interfaces describe the _types_ and _functions_ used to carry out that interaction. [↪](https://component-model.bytecodealliance.org/design/interfaces.html)
 
 A WIT **world** is a higher-level contract that describes a component's capabilities and needs. On one hand, a world describes the shape of a component - it says which interfaces the component exposes for other code to call (its exports), and which interfaces the component depends on (its imports).
-A world *only* defines the surface of a component, not the internal behaviour. On the other hand though, a world defines a hosting environment for components. An environment supports a world by providing implementations for all of the imports and by optionally invoking one or more of the
-exports.  [↪](https://component-model.bytecodealliance.org/design/worlds.html)
+A world _only_ defines the surface of a component, not the internal behaviour. On the other hand though, a world defines a hosting environment for components. An environment supports a world by providing implementations for all of the imports and by optionally invoking one or more of the
+exports. [↪](https://component-model.bytecodealliance.org/design/worlds.html)
 
 The **WIT** (Wasm Interface Type) language is used to define interfaces and worlds. A WIT spec, or "WASIp2 interface specs" as we informally call earlier, is stored in a `.wit` file. For details of WIT language, please
 see [the related section](https://component-model.bytecodealliance.org/design/wit.html) of WACMDoc.
 
-A WIT **package** is a set of one or more WIT (Wasm Interface Type) files containing a related set of interfaces and worlds.  [↪](https://component-model.bytecodealliance.org/design/packages.html)
+A WIT **package** is a set of one or more WIT (Wasm Interface Type) files containing a related set of interfaces and worlds. [↪](https://component-model.bytecodealliance.org/design/packages.html)
 
 OK, enough talking. Let's take a look at the simplest example of WIT files:
 
@@ -174,7 +174,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-wit-bindgen = "0.36"
+wit-bindgen = "0.46"
 ```
 
 With the magical `wit_bindgen::generate` macro, we don't have to write boilerplate glue code. Even better, all implementation code is statically checked by our beloved `rustc`.
@@ -208,14 +208,16 @@ With dozens of lines in total, you can then simply run `cargo build --target was
 > To inspect `.wasm` files and more, you can install `wasm-tools` by `cargo install --locked wasm-tools`, or refer to the [repo](https://github.com/bytecodealliance/wasm-tools) for more instructions.
 >
 > To see `guest_adder_rs.wasm` component is indeed self-describing:
+>
 > ```shell
 > $ wasm-tools component wit guest_adder_rs.wasm
 > package root:component;
-> 
+>
 > world root {
 >   export add: func(a: s32, b: s32) -> s32;
 > }
 > ```
+>
 > `guest_adder_rs.wasm` itself includes all necessary descriptions of its import and export interfaces.
 
 #### Adder in Python {#python-adder-component}
@@ -229,18 +231,19 @@ pip3 install componentize-py
 For a Python program to implement the exports of world `adder`, we can generate bindings by:
 
 ```shell
-componentize-py --wit-path adder.wit --world adder bindings .  # don't miss the dot
+componentize-py --wit-path adder.wit --world adder bindings ./adder
 ```
 
 which will generate a Python package in the current directory named `adder`. Importing from `adder` Python package, your Python program gets a proper abstract class to inherit from.
 
 ```python
-# in guest-adder.py
-import adder
+# in guest-adder.py, place it in ./adder
 
+# wit_world is generated in ./adder
+from wit_world import WitWorld
 
-# the class MUST be named `Adder`, same as the abstract class
-class Adder(adder.Adder):
+# the class MUST be named `WitWorld`, same as the abstract class
+class WitWorld(WitWorld):
     def add(self, a: int, b: int) -> int:
         return a + b
 ```
@@ -253,7 +256,7 @@ componentize-py --wit-path adder.wit --world adder componentize guest-adder -o g
 
 > What is the difference between `guest_adder_py.wasm` and `guest_adder_rs.wasm`?
 >
-> I was surprised to see `guest_adder_py.wasm` sizes much bigger than `guest_adder_rs.wasm`, which we will come back later.
+> I was surprised to see that `guest_adder_py.wasm` sizes much bigger than `guest_adder_rs.wasm`, which we will come back later.
 
 ### Guests and Hosts
 
@@ -262,14 +265,14 @@ In contrast to the notion of "caller" and "callee", we use "guest" and "host", b
 
 There are two ways to read the following content:
 
-* you can read it sequentially, as it starts from basic examples to more involved ones.
-* or, you can skip ahead by looking up the following table.
+- you can read it sequentially, as it starts from basic examples to more involved ones.
+- or, you can skip ahead by looking up the following table.
 
-| Host/Guest                    | Rust Adder [↪](#rust-adder-component) | Python Adder [↪](#python-adder-component) | Rust KVDatabase  |
-|-------------------------------|:--------------------------------------|:------------------------------------------|:-----------------|
-| Rust Host [↪](#rust-host)     | ✅                                     | ✅                                         | ✅ [↪](#appendix) |
-| Python Host [↪](#python-host) | ✅                                     | 🛠️                                       | 🛠️              |
-| Command Component (from Rust) | ✅[↪](#command-component)              | 📌                                        | 📌               |
+| Host/Guest                    | Rust Adder [↪](#rust-adder-component) | Python Adder [↪](#python-adder-component) | Rust KVDatabase   |
+| ----------------------------- | :------------------------------------ | :---------------------------------------- | :---------------- |
+| Rust Host [↪](#rust-host)     | ✅                                    | ✅                                        | ✅ [↪](#appendix) |
+| Python Host [↪](#python-host) | ✅                                    | 🛠️                                        | 🛠️                |
+| Command Component (from Rust) | ✅[↪](#command-component)             | 📌                                        | 📌                |
 
 ✅: Currently supported
 
@@ -287,13 +290,13 @@ We need latest `wasmtime`, which is the crate of _the_ reference WASM runtime, a
 # in host-rs/Cargo.toml
 [package]
 name = "host-rs"
-version = "0.1.1"
-edition = "2021"
+version = "0.5.2"
+edition = "2024"
 
 [dependencies]
 anyhow = "1.0"
-wasmtime = "30.0"
-wasmtime-wasi = "30.0"
+wasmtime = "38.0"
+wasmtime-wasi = "38.0"
 ```
 
 Before diving into the main logics, we need some utilities:
@@ -303,27 +306,23 @@ Before diving into the main logics, we need some utilities:
 use anyhow::Context;
 use wasmtime::component::{Component, Linker, ResourceTable};
 use wasmtime::{Engine, Result, Store};
-use wasmtime_wasi::{IoImpl, IoView, WasiImpl};
-use wasmtime_wasi::{WasiCtx, WasiCtxBuilder, WasiView};
+use wasmtime_wasi::{WasiCtx, WasiCtxBuilder, WasiCtxView, WasiView};
 
 // reference: https://docs.rs/wasmtime/latest/wasmtime/component/bindgen_examples/_0_hello_world/index.html
 // reference: https://docs.wasmtime.dev/examples-rust-wasi.html
 
 pub(crate) struct ComponentRunStates {
-    // These two are required basically as a standard way to enable the impl of WasiView and IoView
+    // These two are required basically as a standard way to enable the impl of WasiView
     pub wasi_ctx: WasiCtx,
     pub resource_table: ResourceTable,
 }
 
-impl IoView for ComponentRunStates {
-    fn table(&mut self) -> &mut ResourceTable {
-        &mut self.resource_table
-    }
-}
-
 impl WasiView for ComponentRunStates {
-    fn ctx(&mut self) -> &mut WasiCtx {
-        &mut self.wasi_ctx
+    fn ctx(&mut self) -> WasiCtxView<'_> {
+        WasiCtxView {
+            ctx: &mut self.wasi_ctx,
+            table: &mut self.resource_table,
+        }
     }
 }
 
@@ -346,11 +345,11 @@ pub fn get_component_linker_store(
     Store<ComponentRunStates>,
 )> {
     let component = Component::from_file(engine, path)
-        .or_else(|_| Component::from_file(&engine, alt_path))
+        .or_else(|_| Component::from_file(engine, alt_path))
         .with_context(|| format!("Cannot find component from path: {path} or {alt_path}"))?;
-    let linker = Linker::new(&engine);
+    let linker = Linker::new(engine);
     let state = ComponentRunStates::new();
-    let store = Store::new(&engine, state);
+    let store = Store::new(engine, state);
     Ok((component, linker, store))
 }
 ```
@@ -363,7 +362,7 @@ Instances are created by instantiating a WASM module (that resides in a componen
 
 > For more details, see the documentations about [`Component`](https://docs.rs/wasmtime/latest/wasmtime/component/struct.Component.html), [`Linker`](https://docs.rs/wasmtime/latest/wasmtime/component/struct.Linker.html) and [`Store`](https://docs.rs/wasmtime/latest/wasmtime/struct.Store.html).
 
-As for `ComponentRunStates`, it contains necessary fields to implement `WasiView` and `IoView` traits, which are essential for interacting with the functionalities provided by `wasmtime_wasi`.
+As for `ComponentRunStates`, it contains necessary fields to implement `WasiView` trait, which is essential for interacting with the functionalities provided by `wasmtime_wasi`.
 
 If the above is a lot to take in, fear not. All you need to know for now is that all the code in `src/utils.rs` except my little helper function is basically standard to get started. You can take your time later to dig into the details of the wasmtime runtime.
 
@@ -405,14 +404,14 @@ Note that `bindgen` can generate asynchronous bindings as well, which is useful 
 
 Hosting a component in Python is not well-supported yet, so we can run a small subset of components that don't use any [WASIp2 Resources](https://component-model.bytecodealliance.org/design/wit.html#resources). This for now also means we cannot run any components compiled from Python programs.
 
-> Refer to this [section](https://component-model.bytecodealliance.org/language-support/python.html#running-components-from-python-applications) of WACMDoc and this [issue](https://github.com/bytecodealliance/wasmtime-py/issues/197) for more details.
+> Follow this [issue](https://github.com/bytecodealliance/wasmtime-py/issues/309) for updates.
 
 Notwithstanding, we can still run simple components compiled from Rust programs.
 
 First we will need to install `wasmtime-py`:
 
 ```shell
-pip install -U "wasmtime>=30.0.0"
+pip install -U "wasmtime>=38.0.0"
 ```
 
 If you haven't done so, compile the Rust adder component as mentioned in [Adder Component](#rust-adder-component).
@@ -421,7 +420,7 @@ With the Rust adder component, we need to generate Python bindings:
 
 ```shell
 # replace guest_adder_rs.wasm with the path to your Rust adder component
-python -m wasmtime.bindgen guest_adder_rs.wasm --out-dir adder_rs_bindings  
+python -m wasmtime.bindgen guest_adder_rs.wasm --out-dir adder_rs_bindings
 ```
 
 This will create a Python package named `adder_rs_bindings` in the current directory.
@@ -484,8 +483,7 @@ OK, welcome back!
 
 Let's dive right into the first 2 questions.
 
-According to the WACMDoc, `wasmtime-py` does not currently support running components build with `componentize-py`.
-This is because wasmtime-py does not yet support resources, which components built with `componentize-py` always use, since `componentize-py` unconditionally imports most of the `wasi:cli`
+According to the [issue](<(https://github.com/bytecodealliance/wasmtime-py/issues/309)>), `wasmtime-py` does not currently support running components build with `componentize-py`, because `wasmtime-py` does not yet support resources, which components built with `componentize-py` always use, as `componentize-py` unconditionally imports most of the `wasi:cli`
 world. [↪](https://component-model.bytecodealliance.org/language-support/python.html#running-components-from-python-applications)
 
 The explanation is simple, but why does `componentize-py` unconditionally import most of the `wasi:cli` world in the first place?
@@ -501,12 +499,12 @@ The batteries-included std libs of Python are huge, so the component size is muc
 
 Therefore, the compiled component may be bloated by std libs:
 
-* in terms of logics:
-    * std libs may include unused code in the component.
-    * std libs may also include useful code that we don't explicitly require, like error handling.
-* in terms of interfaces:
-    * std libs may include interfaces that we don't need anyway
-    * std libs may require interfaces that we indirectly need, for example, stderr interface when a crash happens and error messages are printed.
+- in terms of logics:
+  - std libs may include unused code in the component.
+  - std libs may also include useful code that we don't explicitly require, like error handling.
+- in terms of interfaces:
+  - std libs may include interfaces that we don't need anyway
+  - std libs may require interfaces that we indirectly need, for example, stderr interface when a crash happens and error messages are printed.
 
 A leaner language like Rust is no exception. For those who are interested, you can take a look at [this issue](https://github.com/rust-lang/rust/issues/133235) in Rust repository, filed by me :)
 A brief summary of the issue is that when a simple functionality from Rust std is used, say the `format!` macro, the Rust compiler will include the whole `wasi:cli` world that includes some interfaces that are useless in this case, like `wasi:cli/env` for accessing environment variables.
@@ -582,17 +580,17 @@ Therefore, you cannot run this command component with `wasmtime` in command line
 What we can do is **composition**. We compose the `interfaced-adder` component with the `host-command-component` to form a new component, which imports only the `wasi:cli/command` interfaces and exports only the `wasi:cli/run` interface.
 
 ![command_component](command-component.png)
->
+
 > The "shapes" of individual components and the composed component.
 >
 > The composed component is run by `wasmtime` in command line.
->
 
 The composition can be done programmatically or visually with [wasmbuilder.app](https://wasmbuilder.app/). For the purpose of demonstration, we will use the visual way.
+
 > Please refer to [Compose with WAC](https://component-model.bytecodealliance.org/creating-and-consuming/composing.html#advanced-composition-with-the-wac-language) if you are interested in the programmatic way.
 
-
 ![composition](composition.png)
+
 > Compose with wasmbuilder.app
 
 The steps are straightforward:
@@ -687,23 +685,23 @@ With these, I hope this guide is more than a good start for WASIp2. Have fun hac
 
 Along my way stumbling through the WASIp2 tutorials, documentations and examples, I found a few issues and missing pieces, some resolved, some not:
 
-* Resolved ones by me, just FYI:
-    * [Missing examples for using bindgen! async, imports and resource in host](https://github.com/bytecodealliance/wasmtime/issues/9776)
-    * [Bindgen improvement: Remove the use of async_trait](https://github.com/bytecodealliance/wasmtime/issues/9823)
-    * [Documentation: Wrong doc about Config::wasm_component_model](https://github.com/bytecodealliance/wasmtime/issues/9694)
-    * [Renovate host example with latest wasmtime and wasmtime_wasi](https://github.com/bytecodealliance/component-docs/issues/179)
-    * [Renovate the WASI example](https://github.com/bytecodealliance/wasmtime/issues/9777)
-* Unresolved ones, for those who may be interested in contributing:
-    * [Compiled wasm32-wasip2 component from simple code requires excessive WASI interfaces](https://github.com/rust-lang/rust/issues/133235)
-    * [Bindgen! gives weird name to an interface well-named in WIT file](https://github.com/bytecodealliance/wasmtime/issues/9774)
+- Resolved ones by me, just FYI:
+  - [Missing examples for using bindgen! async, imports and resource in host](https://github.com/bytecodealliance/wasmtime/issues/9776)
+  - [Bindgen improvement: Remove the use of async_trait](https://github.com/bytecodealliance/wasmtime/issues/9823)
+  - [Documentation: Wrong doc about Config::wasm_component_model](https://github.com/bytecodealliance/wasmtime/issues/9694)
+  - [Renovate host example with latest wasmtime and wasmtime_wasi](https://github.com/bytecodealliance/component-docs/issues/179)
+  - [Renovate the WASI example](https://github.com/bytecodealliance/wasmtime/issues/9777)
+- Unresolved ones, for those who may be interested in contributing:
+  - [Compiled wasm32-wasip2 component from simple code requires excessive WASI interfaces](https://github.com/rust-lang/rust/issues/133235)
+  - [Bindgen! gives weird name to an interface well-named in WIT file](https://github.com/bytecodealliance/wasmtime/issues/9774)
 
 As WASIp2 technologies are rather young, if you find WASIp2 is interesting, please consider contributing code and/or documentation to the related WASIp2 projects, like [wasmtime](https://github.com/bytecodealliance/wasmtime)
 and [WebAssembly Component Model Documentation](https://github.com/bytecodealliance/component-docs).
 
 Finally, my code is also open sourced:
 
-* [wasi_mindmap](https://github.com/ifsheldon/wasi_mindmap): A collection of examples and tutorials about WASIp2.
-* [ideas reifying](https://github.com/ifsheldon/ideas_reifying): The source of this blog site.
+- [wasi_mindmap](https://github.com/ifsheldon/wasi_mindmap): A collection of examples and tutorials about WASIp2.
+- [ideas reifying](https://github.com/ifsheldon/ideas_reifying): The source of this blog site.
 
 Contributions to my repos are also welcome!
 
@@ -714,9 +712,9 @@ The foundation of software interops is still legacy C ABIs, which are not only f
 
 Besides LLMs which may or may not end humanity, I also see some interesting explorations by us humans:
 
-* [Making WebAssembly and Wasmtime More Portable](https://bytecodealliance.org/articles/wasmtime-portability): This will enable `wasmtime` to run on more platforms, including mobile and edge devices.
-    * In the use case of robotics, with WASIp2, we can run components (written in different languages) on a robot and/or MCUs of body parts of it while keeping them interoperable. This may be more powerful and flexible than [Robot Operating System (ROS)](https://www.ros.org/).
-* [k23](https://github.com/JonasKruckenberg/k23): This is a OS kernel reimagined with WebAssembly. It leverages the built-in sandboxing of WebAssembly to provide a secure environment for running untrusted code. With WASIp2, programs (including the kernel) can be written in any languages with max
+- [Making WebAssembly and Wasmtime More Portable](https://bytecodealliance.org/articles/wasmtime-portability): This will enable `wasmtime` to run on more platforms, including mobile and edge devices.
+  - In the use case of robotics, with WASIp2, we can run components (written in different languages) on a robot and/or MCUs of body parts of it while keeping them interoperable. This may be more powerful and flexible than [Robot Operating System (ROS)](https://www.ros.org/).
+- [k23](https://github.com/JonasKruckenberg/k23): This is a OS kernel reimagined with WebAssembly. It leverages the built-in sandboxing of WebAssembly to provide a secure environment for running untrusted code. With WASIp2, programs (including the kernel) can be written in any languages with max
   interoperability and flexibility.
 
 ## Appendix: More Examples {#appendix}
@@ -871,7 +869,7 @@ This code example should give you a sense of how to implement a host and a guest
 
 ## Metadata
 
-Version: 0.1.0
+Version: 0.2.0
 
 Date: 2025.01.01
 
@@ -882,3 +880,5 @@ License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 2025.01.08: Updated tracking issues
 
 2025.03.03: Updated to `wasmtime >= 30.0` and fixed typos
+
+2025.11.14: Updated to use latest code

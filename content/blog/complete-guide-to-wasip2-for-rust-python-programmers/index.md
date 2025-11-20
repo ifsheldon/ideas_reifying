@@ -634,16 +634,16 @@ pub fn run_adder_dynamic(engine: &Engine) -> Result<()> {
     let func = instance.get_func(&mut store, func_idx).unwrap();
     // 参考：
     // * https://github.com/WebAssembly/wasi-cli/blob/main/wit/run.wit
-    // * [Func::typed](https://docs.rs/wasmtime/latest/wasmtime/component/struct.Func.html#method.typed) 和 [ComponentNamedList](https://docs.rs/wasmtime/latest/wasmtime/component/trait.ComponentNamedList.html) 的文档
-
+    // * [Func::typed](https://docs.rs/wasmtime/latest/wasmtime/component/struct.Func.html) 和 [ComponentNamedList](https://docs.rs/wasmtime/latest/wasmtime/component/trait.ComponentNamedList.html) 的文档
+    let ty = func.ty(&store);
     // 如果你在编译时不知道函数参数和返回值的类型
     // 在运行时迭代参数类型
-    for (i, p) in func.params(&store).iter().enumerate() {
-        println!("第 {}个参数的类型: {:?}", i, p);
+    for (i, p) in ty.params().enumerate() {
+        println!("第 {i}个参数的类型: {p:?}");
     }
     // 在运行时迭代返回值类型
-    for (i, r) in func.results(&store).iter().enumerate() {
-        println!("第 {}个结果的类型: {:?}", i, r);
+    for (i, r) in ty.results().enumerate() {
+        println!("第 {i}个结果的类型: {r:?}");
     }
 
     // 如果你在编译时知道函数参数和返回值的类型
@@ -774,7 +774,7 @@ bindgen!({
     path: "../wit-files/kv-store.wit",
     world: "kv-database",
     with: {
-        "wasi-mindmap:kv-store/kvdb/connection": Connection
+        "wasi-mindmap:kv-store/kvdb.connection": Connection
     },
     // 与 `ResourceTable` 的交互可能会陷入困境，因此启用从生成的函数返回陷阱的能力。
     trappable_imports: true,
@@ -859,7 +859,7 @@ fn main() -> Result<()> {
 
 ## 元数据
 
-版本：0.2.0
+版本：0.2.1
 
 日期：2025.04.22
 
@@ -868,3 +868,5 @@ fn main() -> Result<()> {
 ### 更新日志
 
 2025.11.14: 更新到最新代码
+
+2025.11.21: 更新到最新代码，使用 `wasmtime 39`

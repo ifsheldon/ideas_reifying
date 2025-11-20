@@ -642,16 +642,12 @@ pub fn run_adder_dynamic(engine: &Engine) -> Result<()> {
     let func = instance.get_func(&mut store, func_idx).unwrap();
     // Reference:
     // * https://github.com/WebAssembly/wasi-cli/blob/main/wit/run.wit
-    // * Documentation for [Func::typed](https://docs.rs/wasmtime/latest/wasmtime/component/struct.Func.html#method.typed) and [ComponentNamedList](https://docs.rs/wasmtime/latest/wasmtime/component/trait.ComponentNamedList.html)
-
+    // * Documentation for [Func::typed](https://docs.rs/wasmtime/latest/wasmtime/component/struct.Func.html) and [ComponentNamedList](https://docs.rs/wasmtime/latest/wasmtime/component/trait.ComponentNamedList.html)
+    let ty = func.ty(&store);
     // If you don't know the types of arguments and return values of the function at compile time
     // iterate over the types of arguments at run time
-    for (i, p) in func.params(&store).iter().enumerate() {
-        println!("Type of {}th param: {:?}", i, p);
-    }
-    // iterate over the types of return values at run time
-    for (i, r) in func.results(&store).iter().enumerate() {
-        println!("Type of {}th result: {:?}", i, r);
+    for (i, p) in ty.params().enumerate() {
+        println!("Type of {i}th param: {p:?}");
     }
 
     // If you know the types of arguments and return values of the function at compile time
@@ -783,7 +779,7 @@ bindgen!({
     path: "../wit-files/kv-store.wit",
     world: "kv-database",
     with: {
-        "wasi-mindmap:kv-store/kvdb/connection": Connection
+        "wasi-mindmap:kv-store/kvdb.connection": Connection
     },
     // Interactions with `ResourceTable` can possibly trap so enable the ability
     // to return traps from generated functions.
@@ -869,7 +865,7 @@ This code example should give you a sense of how to implement a host and a guest
 
 ## Metadata
 
-Version: 0.2.0
+Version: 0.2.1
 
 Date: 2025.01.01
 
@@ -882,3 +878,5 @@ License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 2025.03.03: Updated to `wasmtime >= 30.0` and fixed typos
 
 2025.11.14: Updated to use latest code
+
+2025.11.21: Updated to use latest `wasmtime 39`

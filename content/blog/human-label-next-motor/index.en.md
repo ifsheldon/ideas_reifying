@@ -65,10 +65,54 @@ History does not repeat itself but it rhymes. We've seen gigafactories of AI and
 
 **Open technical and social protocols prevail:** There will not be all-in-one proprietary solutions or applications anymore. Every enterprise and everyone build their own "electric motors" based on open-source solutions, templates and protocols.
 
+### Interesting details
+
+If the above implications seems too general, I have a couple of near-term predictions after rethinking agent development in my recent project:
+1. A new type of personal computer (or at least a new type of filesystem) will emerge to suit the needs of human collaboration with agents.
+2. Agentic CI/CD will be the first step towards automation that has no involvement (even minimal monitoring) of humans.
+
+Here's a bit of background: I have quite a few data visualizations that are tailored for desktop browsers, but I want to make them all mobile friendly. This conversion is not trivial, although it seems so. The conversion agent or agents need to know/extract the data behind a visualization, guess the intention from the original visualization (like what information to preserve, present or even emphasize), and finally generate the mobile-friendly visualization that must ensure the "same" information is presented in a readable and friendly way on mobile devices.
+
+My first attempt was to use Google Antigravity since it enables agents to see the converted mobile visualization in the browser, so that they can correct any UX mistakes. However, as an agent needed to go through many steps (like, read the original visualization on a desktop browser and a mobile browser, read the original code, extract the data, implement the mobile visualization and check it on the mobile browser), it sometimes missed some key steps and made mistakes. This was expected, so I would give some reminders to the agent. The result was not bad, in fact, way beyond my expectations to my surprise. However, I knew that this was not scalable, as I had many visualizations to convert and little time to monitor the agent.
+
+Then, I decided to go for multi-agents: one agent is the planner, one is the data extractor, one is the implementor and the last one is the reviewer. The one library that came to my mind was LangChain, but honestly even though I have not written multi-agent implementations for a long long time (~10 months!), I still remember how it sucked. I also read its documentation and found a new shining library called DeepAgent, which honestly seemed nice. However, I just could not convince myself to use it. As I have many visualizations, meaning many small projects that need to be handled by agents, I needed to provide many clean workspaces for them to work on, but DeepAgent seems to not support an easy way to spawn many folder-based workspaces. Besides, I started headache when I thought about how to manage the interactions between these four agents. What messages to send to each other, what context to share, what tools to use, how to manage feedback loops in each agent, etc.
+
+I just wished to have an agent with zero-setup, which can use all the tools on my computer, do the work and check the results itself. Wait, in fact, I have not one but multiple already: `codex`, `gemini-cli` and `claude code`! Then I decided to just go for a two-agent setup: 
+1. The planner is actually just a workflow. A python script renders the original visualization on a desktop browser and a mobile browser. No need for an agent to open two different browsers with flaky tool use. The rendered results with the original code and other text requirements are sent to Gemini 3 Pro, which will reliably generate a detailed implementation plan.
+2. For each visualization, a clean JS project with necessary dependencies and scaffolding code is generated from a template. The detailed plan is saved as a text file in the project, along with the original visualization renderings and the original code. One desktop visualization -> One clean JS project
+3. The second agent is just `gemini-cli`, which reads the plan and does whatever it needs to do to implement the plan.
+
+The only minor problem is that multiple `node-modules` in many projects take up a lot of space. But it's a reasonable price to pay, since now the only script I need to write is just:
+```text
+# pseudo code
+for each desktop visualization:
+    render the visualization on a desktop browser and a mobile browser
+    run a Python script to generate a detailed implementation plan
+    copy the files in the template to create a new project
+    save the plan to the project
+    configure a playwright MCP for gemini-cli to use
+    run gemini-cli to implement the plan and ask it to review the results itself
+```
+
+No context management, no messaging whatsoever. Just run the script and wait for the results.
+
+When I took the shower when waiting for the results, I realized that this is quite similar to CI/CD pipelines, except that the pipeline is composed of agents instead of scripts, run on my computer instead of a remote server, version-controlled by folders instead of git repositories. This is elegant in a brute-force sense and ugly in a dumb sense. But, let's take a step back and ask: why did I have to do this?
+
+First of all, I, as a human, had become a limiting factor in my grand project. I simply did not have enough time to do everything myself or even monitor the agents. I was and still am not scalable. On the technical side, PCs (also known as "personal computers") are not scalable either. They are designed for single users and not for multiple users. For example, we cannot spawn multiple folders easily, since it did not make sense when the only user is me. Even the holy git, the distributed version control system, is not designed for multiple users on _one_ computer. For example, in a repository, we cannot work on multiple branches at the same time because this _did not_ make sense. However, as of today, the number of users on one computer working on the same project, in the same directory, or in the same workspace is no longer **1**.
+
+When we work with multiple agents, we need a new filesystem or git to support simultaneous parallel universes of work. Docker may be a solution, but come on, we deserve better. 
+
+When we need to monitor the agents, ourselves become the new mainframe, since our attention and time are just limited and thus must be multiplexed. You see, previously, every job or every piece of work gets assigned to a human. With automation, some pieces of work can be completed under the supervision/control of a human. But what if most of work no longer needs be assigned to a human controller/monitor? That, to me, will be another leap like the one from mainframe to personal computer before.
+
+
 ## Metadata
 
-Version: 0.1.0
+Version: 0.2.0
 
 Date: 2025-12-09
 
 License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+
+### Changelog
+
+2025-12-26: Added interesting details

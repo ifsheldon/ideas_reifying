@@ -4,6 +4,7 @@ description = "现有的基于人力劳动的企业和社会结构，跟电气�
 draft = false
 
 weight = 13
+aliases = ["blog/human-label-next-motor/"]
 
 [taxonomies]
 tags = ["AI"]

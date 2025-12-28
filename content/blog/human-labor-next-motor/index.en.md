@@ -4,6 +4,7 @@ description = "The existing enterprises based on human labor and their supportin
 draft = false
 
 weight = 13
+aliases = ["en/blog/human-label-next-motor/"]
 
 [taxonomies]
 tags = ["AI"]

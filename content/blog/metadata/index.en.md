@@ -34,7 +34,7 @@ When you want to quote or link to this blog, please click the link above to unde
 
 ## Say Hi
 
-fl at reify.ing
+hi at reify.ing
 
 ## Buy me a coffee
 

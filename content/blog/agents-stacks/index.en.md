@@ -6,7 +6,7 @@ draft = false
 weight = 8
 
 [taxonomies]
-tags = ["AI", "Product Dev"]
+tags = ["AI", "LLM", "Random Thoughts"]
 
 [extra]
 feature_image = "stack.png"
@@ -49,11 +49,11 @@ Essentially, App Intents is an interoperability layer. Now, if we use WASI 0.2 a
 
 Imagine a humanoid robot:
 
-* Its facial expressions and UI are defined by an app written in React, but the app itself is compiled into a WASM module.
-* When the LLM makes function calls, it calls functions defined by WASI, allowing the LLM to directly raise the robot's hand, even if the hand controller program is written in C++.
-* When the robot interacts with smart home appliances, it calls WASI functions, even if the appliance control program is written in C.
-* You can add a camera module to the robot, with control code written in Go.
-* For the humanoid robot manufacturer, as long as all the robot's APIs are defined using WASI, developers can use any language to develop the robot.
+- Its facial expressions and UI are defined by an app written in React, but the app itself is compiled into a WASM module.
+- When the LLM makes function calls, it calls functions defined by WASI, allowing the LLM to directly raise the robot's hand, even if the hand controller program is written in C++.
+- When the robot interacts with smart home appliances, it calls WASI functions, even if the appliance control program is written in C.
+- You can add a camera module to the robot, with control code written in Go.
+- For the humanoid robot manufacturer, as long as all the robot's APIs are defined using WASI, developers can use any language to develop the robot.
 
 ## Agent Capability Framework
 
@@ -68,10 +68,10 @@ Currently, many people speak highly of agents, as if they can solve numerous pro
 Based on these three major components, we implement guardrails and benchmark each component:
 
 1. Foundation Model: Various alignments and benchmarks.
-    * Notably, benchmarks include [HashHop](https://github.com/magicproduct/hash-hop) and various metrics proposed by Zeyuan Allen Zhu in _Physics of Language Models_.
+   - Notably, benchmarks include [HashHop](https://github.com/magicproduct/hash-hop) and various metrics proposed by Zeyuan Allen Zhu in _Physics of Language Models_.
 2. Auxiliaries:
-    * For tool usage, there are various engineering safety practices (such as authorization, sandboxing, etc.) and relevant benchmarks.
-    * For memory, we can directly introspect the content of the memory or allow the model to retrospect; however, benchmarks for memory seems to be still immature.
+   - For tool usage, there are various engineering safety practices (such as authorization, sandboxing, etc.) and relevant benchmarks.
+   - For memory, we can directly introspect the content of the memory or allow the model to retrospect; however, benchmarks for memory seems to be still immature.
 3. Behavior: Mainly to prevent prompt injection; benchmarking the ability to follow instructions.
 
 ## Metadata
@@ -81,4 +81,3 @@ Version: 0.0.1
 Date: 2024.09.01
 
 License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
-

@@ -218,7 +218,7 @@ export!(Adder);
 Python 没有对 WASIp2 的原生支持，所以我们需要安装 `componentize-py`：
 
 ```shell
-pip3 install componentize-py
+pip3 install "componentize-py==0.21.0"
 ```
 
 对于要实现 `adder` 世界导出的 Python 程序，我们可以通过以下方式生成绑定：
@@ -227,7 +227,7 @@ pip3 install componentize-py
 componentize-py --wit-path adder.wit --world adder bindings ./adder
 ```
 
-这会在当前目录里生成一个名为 `adder` 的 Python 包。从 `adder` Python 包导入，你的 Python 程序会由有一个合适的抽象类来继承。
+输出目录 `adder` 中包含生成的 `wit_world` Python 包，它提供了可供继承的抽象类。
 
 ```python
 # in guest-adder.py, place it in ./adder
@@ -450,7 +450,7 @@ def run_adder_rs_guest():
 run_adder_rs_guest()
 ```
 
-或者，对于这样一个简单的组件，`wasmtime-py` 有一个魔法加载器可以在不生成绑定的情况下加载组件并运行它：
+或者，对于这样一个简单的组件，`wasmtime-py` 有一个魔法加载器可以在不手动生成绑定的情况下加载并运行组件：
 
 ```python
 # in run_guest_adder_rs_magic_loader.py
@@ -475,7 +475,7 @@ run_adder_rs_guest()
 
 到目前为止一切顺利。上面的示例非常简单易懂，但是我们略过了几个重要的点：
 
-1. 为什么 Python 主机不能运行 Python 组件？
+1. 为什么这个 Python 主机不能运行我们构建的 Python 组件？
 2. 为什么 Python 组件比 Rust 组件大得多？
 3. 为什么我们有一个不同于 `adder.wit` 的 `interfaced_adder.wit`？
 
@@ -499,7 +499,7 @@ run_adder_rs_guest()
 ![component_zoomed_in](component_zoomed_in.png)
 
 在 `guest_adder_py.wasm` 的情况下，由于我们不需要第三方库，组件内部模块中的唯一逻辑部分是 Python 的标准库和我们的加法逻辑。
-由于 Python 标准库的需求（例如，处理崩溃，读取环境变量），`componentize-py` 无条件地导入了大部分 `wasi:cli` 世界。
+由于 Python 标准库的需求（例如，处理崩溃，读取环境变量），编译后的 Python 组件导入了大部分 `wasi:cli` 世界。
 
 Python 自带的标准库非常庞大，所以组件大小比 Rust 组件大得多，尽管在我们的加法器例子里很多标准库功能都没用上。
 

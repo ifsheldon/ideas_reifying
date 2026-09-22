@@ -121,20 +121,23 @@ Composition was checked locally with the CLI; the existing visual walkthrough wa
 
 ## 8. Python setup, paths, and loader explanation
 
-- [ ] Use the tested member-directory `uv sync` and `uv run` workflow, including Python >=3.12 and the repository's locked dependency versions.
-- [ ] Specify where binding generation and componentization run, and adjust WIT paths after entering the generated directory.
-- [ ] Explain that `adder` is the output directory containing the generated `wit_world` package; keep the working `WitWorld` implementation.
-- [ ] Replace the pinned `pip install "wasmtime==38.0.0"` instruction with the repository's `uv` setup.
-- [ ] Document where `guest_adder_rs.wasm` must be placed for the magic loader to find it through `sys.path`, including the existing repository symlink when using that layout.
-- [ ] Say the magic loader avoids a manual binding-generation step; it still generates bindings internally.
-- [ ] Include the final host command, `uv run python host.py`, when following the repository workflow.
-- [ ] Qualify Python component/resource support limitations by the version used in the tutorial rather than making an unversioned claim about current upstream support.
+Changes retained in both languages after editorial review:
 
-The package version is now pinned to `38.0.0` by item 1; replacing the installation workflow remains pending.
+- [x] Keep the existing `pip` setup, using the repository's tested package versions; omit additional environment-management instructions as requested.
+- [x] Explain that `adder` is the output directory containing the generated `wit_world` package; keep the working `WitWorld` implementation.
+- [x] Retain the pinned `pip install "wasmtime==38.0.0"` instruction.
+- [x] Say the magic loader avoids a manual binding-generation step.
+- [x] Refer to the Python component built here in the opening question and standard-library import explanation.
+- [x] Apply the reviewed change to Chinese.
+
+The final revision omits the added working-directory, WIT-path, artifact-placement, and version-qualified support explanations.
+Both languages use Wasmtime `38.0.0` and componentize-py `0.21.0`, matching the repository's tested versions.
 
 Locations: EN 223–254, 403–465, 486–487; ZH 216–247, 396–458, 479–480.
 Reference: `wasi_mindmap/guest-adder-py/{README.md,pyproject.toml}` and `host-py/{README.md,pyproject.toml}`.
-Validation: follow the guest and host README sequences from their respective directories.
+Validation before the final editorial trim used an explicit standalone layout, with componentization run from `adder` using `../adder.wit` and the Rust release artifact placed alongside the host scripts.
+That English validation on 2026-09-22 passed: binding generation and componentization succeeded, and both host scripts printed `1 + 2 = 3` using componentize-py `0.21.0` and Wasmtime `38.0.0`.
+The resource limitation was reproduced with the Python guest, and `zola build` passed.
 
 ## 9. Command-component diagram label
 

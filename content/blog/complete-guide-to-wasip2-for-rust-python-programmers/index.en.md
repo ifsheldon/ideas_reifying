@@ -222,10 +222,10 @@ With dozens of lines in total, you can then simply run `cargo build --target was
 
 #### Adder in Python {#python-adder-component}
 
-Python doesn't have native support for WASIp2, so we need to install `componentize-py` by
+Python doesn't have native support for WASIp2, so we need to install `componentize-py`:
 
 ```shell
-pip3 install componentize-py
+pip3 install "componentize-py==0.21.0"
 ```
 
 For a Python program to implement the exports of world `adder`, we can generate bindings by:
@@ -234,7 +234,7 @@ For a Python program to implement the exports of world `adder`, we can generate 
 componentize-py --wit-path adder.wit --world adder bindings ./adder
 ```
 
-which will generate a Python package in the current directory named `adder`. Importing from `adder` Python package, your Python program gets a proper abstract class to inherit from.
+The output directory `adder` contains the generated `wit_world` Python package, which provides the abstract class to inherit from.
 
 ```python
 # in guest-adder.py, place it in ./adder
@@ -457,7 +457,7 @@ def run_adder_rs_guest():
 run_adder_rs_guest()
 ```
 
-Or, with such a simple component, there's a magic loader from `wasmtime-py` to load the component without generating bindings and run it:
+Or, with such a simple component, there's a magic loader from `wasmtime-py` to load the component without manually generating bindings and run the component:
 
 ```python
 # in run_guest_adder_rs_magic_loader.py
@@ -482,7 +482,7 @@ run_adder_rs_guest()
 
 So far so good. The above examples are simple and straightforward, except that we have a few points that were glossed over:
 
-1. Why exactly a Python host cannot run a Python component?
+1. Why can't this Python host run the Python component we built?
 2. Why does a Python component size much bigger than a Rust component?
 3. Why did we have a `interfaced_adder.wit` which is different from `adder.wit`?
 
@@ -505,7 +505,7 @@ We need to zoom more into the compiled component.
 ![component_zoomed_in](component_zoomed_in.png)
 
 In the case of `guest_adder_py.wasm`, as we don't need 3rd party libraries, the only logical parts in the module inside the component are Python's std libs and our add logic.
-Because of the needs from Python's std libs (e.g., handling crashes, reading env vars to modify the behavior of std libs), `componentize-py` unconditionally imports most of the `wasi:cli` world.
+Because of the needs from Python's std libs (e.g., handling crashes, reading env vars to modify the behavior of std libs), the compiled Python component imports most of the `wasi:cli` world.
 
 The batteries-included std libs of Python are huge, so the component size is much bigger than a Rust component, even though much of the std libs are not used in our adder example.
 

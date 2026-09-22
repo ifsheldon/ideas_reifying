@@ -911,5 +911,6 @@ License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 
 2025.11.21: Updated to use latest `wasmtime 39`
 
-2026.09.22: Updated Rust examples to `wasmtime 49.0`, `wasmtime-wasi 49.0`, and `wit-bindgen 0.62.0`; completed the host setup and updated dynamic export lookup and KV host APIs.
-Python Wasmtime remains pinned to `38.0.0` independently of the Rust crates.
+2026.09.22: Updated Rust examples to `wasmtime 49.0`, `wasmtime-wasi 49.0`, and `wit-bindgen 0.62.0`, including host API fixes.
+Fixed KV connection persistence and switched command-component builds to ordinary Cargo targeting `wasm32-wasip2`.
+Clarified Python bindings and pinned `componentize-py` to `0.21.0`; Python Wasmtime remains at `38.0.0`.

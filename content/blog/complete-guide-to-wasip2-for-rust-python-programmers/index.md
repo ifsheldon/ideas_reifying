@@ -898,5 +898,6 @@ fn main() -> Result<()> {
 
 2025.11.21: 更新到最新代码，使用 `wasmtime 39`
 
-2026.09.22: Rust 示例更新到 `wasmtime 49.0`、`wasmtime-wasi 49.0` 和 `wit-bindgen 0.62.0`；补全主机设置，更新动态导出查找和 KV 主机 API。
-Python Wasmtime 仍单独固定为 `38.0.0`，不随 Rust crate 版本变化。
+2026.09.22: Rust 示例更新到 `wasmtime 49.0`、`wasmtime-wasi 49.0` 和 `wit-bindgen 0.62.0`，并修复主机 API 用法。
+修复 KV 连接在多次调用之间的保留问题，命令组件改用普通 Cargo 编译到 `wasm32-wasip2`。
+澄清 Python 绑定说明，将 `componentize-py` 固定为 `0.21.0`；Python Wasmtime 仍为 `38.0.0`。

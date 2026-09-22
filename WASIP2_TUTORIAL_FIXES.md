@@ -6,7 +6,7 @@ Apply each article change to both [English](content/blog/complete-guide-to-wasip
 This records the source audit against the working `wasi_mindmap` examples.
 Items 1–4 are complete in both languages; the basic, dynamic, and KV host snippets were extracted from each article, compiled, and run independently with fresh guest artifacts before the final editorial trim.
 The final articles omit detailed setup instructions and repeated `mod utils;` declarations in the dynamic and KV examples, reusing the initial Rust host context.
-The remaining items are still pending.
+Item 5 is complete in both languages; the remaining work is tracked below.
 Line numbers below refer to the article before these fixes.
 
 ## Order and scope
@@ -80,13 +80,16 @@ Additional debug builds passed for the interfaced adder and the article's own KV
 
 ## 5. KV guest connection lifetime
 
-- [ ] Replace the per-call `Connection::new()` with the repository's `LazyLock<Connection>` implementation.
-- [ ] Explain briefly that the connection is retained between calls to the same component instance.
+- [x] In English, replace the per-call `Connection::new()` with the repository's `LazyLock<Connection>` implementation.
+- [x] In English, explain briefly that the connection is retained between calls to the same component instance.
+- [x] Apply the reviewed change to Chinese.
 
 Locations: EN 745–764; ZH 740–759.
 Reference: `wasi_mindmap/guest-kv-store-rs/src/lib.rs`.
 Reason: the shown host gives each new connection an empty `HashMap`, so the old guest discards its state after every call and always returns `None`.
 Validation: replace the same key twice on one instance; the second call must return the first value.
+English validation on 2026-09-22 passed with a freshly built guest extracted from the article and the repository's locked dependencies offline: the first call returned `None`, the second returned `Some("world")`, and a new component instance started empty.
+The scratch host reused the article's host and utilities, adding `mod utils;` and the repeat-call assertions; `zola build` also passed.
 
 ## 6. Small corrections and metadata
 

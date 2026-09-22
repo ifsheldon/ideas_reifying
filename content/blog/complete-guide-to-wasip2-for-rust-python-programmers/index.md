@@ -768,19 +768,24 @@ wit_bindgen::generate!({
 });
 
 struct KVStore;
+use crate::wasi_mindmap::kv_store::kvdb::Connection;
+use std::sync::LazyLock;
+
+static KV_CONNECTION: LazyLock<Connection> = LazyLock::new(Connection::new);
 
 impl Guest for KVStore {
     fn replace_value(key: String, value: String) -> Option<String> {
-        let kv = wasi_mindmap::kv_store::kvdb::Connection::new();
         // 替换
-        let old = kv.get(&key);
-        kv.set(&key, &value);
+        let old = KV_CONNECTION.get(&key);
+        KV_CONNECTION.set(&key, &value);
         old
     }
 }
 
 export!(KVStore);
 ```
+
+`LazyLock` 让同一组件实例在多次调用之间保留连接，因此替换键的值时可以返回之前的值。
 
 提供 `kvdb` 接口和 `log` 函数的主机更复杂：
 

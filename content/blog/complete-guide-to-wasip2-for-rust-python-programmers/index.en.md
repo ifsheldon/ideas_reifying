@@ -777,19 +777,24 @@ wit_bindgen::generate!({
 });
 
 struct KVStore;
+use crate::wasi_mindmap::kv_store::kvdb::Connection;
+use std::sync::LazyLock;
+
+static KV_CONNECTION: LazyLock<Connection> = LazyLock::new(Connection::new);
 
 impl Guest for KVStore {
     fn replace_value(key: String, value: String) -> Option<String> {
-        let kv = wasi_mindmap::kv_store::kvdb::Connection::new();
         // replace
-        let old = kv.get(&key);
-        kv.set(&key, &value);
+        let old = KV_CONNECTION.get(&key);
+        KV_CONNECTION.set(&key, &value);
         old
     }
 }
 
 export!(KVStore);
 ```
+
+`LazyLock` keeps the connection alive between calls on the same component instance, so replacing a key can return its previous value.
 
 The host providing the `kvdb` interface and the `log` function is more complicated:
 

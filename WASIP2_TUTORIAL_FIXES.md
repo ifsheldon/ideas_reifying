@@ -93,8 +93,8 @@ The scratch host reused the article's host and utilities, adding `mod utils;` an
 
 ## 6. Small corrections and metadata
 
-- [ ] Replace `cargo expand --bin host.rs` with `cargo expand -p host-rs --bin host-rs` when referring to the repository (EN 399; ZH 392).
-- [ ] Repair the malformed English link to wasmtime-py issue 309 at EN 486 by removing the extra parentheses around its URL.
+- [x] Replace `cargo expand --bin host.rs` with `cargo expand -p host-rs --bin host-rs` when referring to the repository (EN 399; ZH 392).
+- [x] Repair the malformed English link to wasmtime-py issue 309 at EN 486 by removing the extra parentheses around its URL.
 - [x] Record this first pass with matching changelog entries and article metadata in both languages: version `0.3.0`, dated `2026.09.22`.
 - [x] Describe the versions actually tested in the latest changelog entry, matching the dependency snippets.
 - [ ] Update the metadata again when the remaining fixes are complete.
@@ -103,17 +103,21 @@ Metadata locations: EN 866 onward; ZH 860 onward.
 
 ## 7. Command-component workflow
 
-- [ ] Replace `cargo component new/check/build`, the component metadata tables, and the generated `mod bindings;` workflow with ordinary Cargo and an inline `wit_bindgen::generate!` module.
-- [ ] Use the repository's ordered WIT paths, selected host world, and `generate_all` option.
-- [ ] Build with `cargo build --target wasm32-wasip2` and update artifact paths from `wasip1` to `wasip2`.
-- [ ] Add the verified `wac plug` command with explicit input/output paths, followed by `wasmtime run` and expected output `result: 3`.
-- [ ] Explain that the binary's `main()` supplies the `wasi:cli/run` entrypoint through the Rust target and that composition supplies the imported adder implementation.
-- [ ] Clarify that custom imports may exist before composition; direct CLI execution requires those imports to be satisfied.
-- [ ] Update the old Rust-guide link to the current runnable-components guide; keep the visual composition walkthrough as an alternative.
+Changes in both languages:
+
+- [x] Replace `cargo component new/check/build`, the component metadata tables, and the generated `mod bindings;` workflow with ordinary Cargo and an inline `wit_bindgen::generate!` module.
+- [x] Use the repository's ordered WIT paths, selected host world, and `generate_all` option.
+- [x] Build with `cargo build --target wasm32-wasip2` and update artifact paths from `wasip1` to `wasip2`.
+- [x] Relate `main()` to the exported `wasi:cli/run` interface and retain the explanation that composition supplies the imported adder implementation.
+- [x] Update the old Rust-guide link to the current runnable-components guide.
+- [x] Keep the existing visual composition walkthrough unchanged; do not add `wac plug` instructions, as requested.
+- [x] Apply the reviewed change to Chinese.
 
 Locations: EN 512–609; ZH 505–601.
 Reference: `wasi_mindmap/host-command-component/{Cargo.toml,src/main.rs,README.md}`.
 Validation: follow the replacement build, composition, and run commands from the stated directory.
+English validation on 2026-09-22 passed: the extracted command snippets built offline with `wit-bindgen 0.62.0`, produced the documented standalone `wasm32-wasip2` artifact, and printed `result: 3` after composition with the repository's interfaced adder.
+Composition was checked locally with the CLI; the existing visual walkthrough was unchanged, and `zola build` passed.
 
 ## 8. Python setup, paths, and loader explanation
 

@@ -525,31 +525,23 @@ Python 自带的标准库非常庞大，所以组件大小比 Rust 组件大得�
 wasmtime run command_component_hosting_adder.wasm
 ```
 
-命令组件是一个（特殊的）组件，导出 `wasi:cli/run` 接口，并且仅导入 [`wasi:cli/command world`](https://github.com/WebAssembly/wasi-cli/blob/main/wit/command.wit) 中列出的接口，这样它可以直接由 wasmtime（或其他 `wasi:cli`
-主机）执行。[↪](https://component-model.bytecodealliance.org/language-support/rust.html#creating-a-command-component-with-cargo-component)
+命令组件是一个（特殊的）组件，导出 `wasi:cli/run` 接口，并且仅导入 [`wasi:cli/command world`](https://github.com/WebAssembly/wasi-cli/blob/main/wit/command.wit) 中列出的接口，这样它可以直接由 wasmtime（或其他 `wasi:cli` 主机）执行。[↪](https://component-model.bytecodealliance.org/language-support/creating-runnable-components/rust.html)
 
 作为例子，我们会在 Rust 中创建一个命令组件，该组件可以运行一个 `interfaced-adder` 组件。
 
-为了轻松创建一个命令组件，我们需要 `cargo-component`
+我们可以用普通的 Rust 二进制项目创建命令组件：
 
 ```shell
-# 如果你还没有安装 cargo-component
-cargo install cargo-component
 # 创建一个名为 `host-command-component` 的新命令组件
-cargo component new host-command-component
+cargo new host-command-component
 ```
 
 在 `host-command-component` 项目内，你需要在 `Cargo.toml` 中添加以下内容：
 
 ```toml
 # 其他内容省略..........
-[package.metadata.component.target]
-# 使用 `wit` 目录中的 WIT 文件定义这个命令组件的世界
-path = "wit"
-
-[package.metadata.component.target.dependencies]
-# 将下面的路径替换为包含 `interfaced-adder.wit` 的目录的实际路径
-"wasi-mindmap:interfaced-adder" = { path = "../guest-interfaced-adder-rs/wit" }
+[dependencies]
+wit-bindgen = "0.62.0"
 ```
 
 在 `host-command-component/wit` 中，你需要为这个命令组件添加一个 WIT 文件，指定它的世界：
@@ -563,12 +555,19 @@ world host {
 }
 ```
 
-然后运行 `cargo component check` 生成 `interfaced-adder` 组件的绑定。你会在 `host-command-component/src/` 中看到 `bindings.rs`。
-
+`wit_bindgen::generate!` 宏在编译时为导入的加法器接口生成绑定。
 这个命令组件的主函数很简单：
 
 ```rust
-mod bindings;
+mod bindings {
+    wit_bindgen::generate!({
+        // 先加载导入的包，再加载使用它的世界。
+        path: ["../guest-interfaced-adder-rs/wit", "wit"],
+        world: "wasi-mindmap:host/host",
+        generate_all,
+    });
+}
+
 use bindings::wasi_mindmap::interfaced_adder::add::add;
 
 fn main() {
@@ -577,9 +576,10 @@ fn main() {
 }
 ```
 
-要编译这个命令组件，运行 `cargo component build`。截至目前，`cargo-component` 仍然使用 `wasm32-wasip1` 作为目标（参见[跟踪问题](https://github.com/bytecodealliance/cargo-component/issues/355)），所以你会在 `target/wasm32-wasip1/debug/host-command-component.wasm` 中找到编译后的组件。
+要编译这个命令组件，在 `host-command-component` 中运行 `cargo build --target wasm32-wasip2`。
+你会在 `target/wasm32-wasip2/debug/host-command-component.wasm` 中找到编译后的组件。
 
-这个命令组件从 `interfaced-adder` 组件导入 `add` 接口，从 `wasi:cli/command` 世界导入接口，然后调用 `add` 函数。它导出的是 `wasi:cli/run` 接口。
+这个命令组件从 `interfaced-adder` 组件导入 `add` 接口，从 `wasi:cli/command` 世界导入接口，然后调用 `add` 函数。它为 `main()` 导出 `wasi:cli/run` 接口。
 因此，你还不能在命令行中使用 `wasmtime` 运行这个命令组件，因为 `wasmtime` 没有实现 `add` 接口。
 
 我们可以做的是**组合**。我们将 `interfaced-adder` 组件与 `host-command-component` 组合形成一个新组件，该组件只导入 `wasi:cli/command` 接口，只导出 `wasi:cli/run` 接口。

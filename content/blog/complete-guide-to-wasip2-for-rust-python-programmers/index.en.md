@@ -532,30 +532,23 @@ wasmtime run command_component_hosting_adder.wasm
 ```
 
 A command component is (just special) one that exports the `wasi:cli/run` interface, and imports _only_ interfaces listed in the [`wasi:cli/command world`](https://github.com/WebAssembly/wasi-cli/blob/main/wit/command.wit), which allows it to be executed directly by wasmtime (or other `wasi:cli`
-hosts). [↪](https://component-model.bytecodealliance.org/language-support/rust.html#creating-a-command-component-with-cargo-component)
+hosts). [↪](https://component-model.bytecodealliance.org/language-support/creating-runnable-components/rust.html)
 
 For the purpose of demonstration, we will create a command component in Rust, which hosts an `interfaced-adder` component.
 
-To create a command component with ease, we need some help from `cargo-component`.
+We can create a command component as a regular Rust binary project:
 
 ```shell
-# install cargo-component if you haven't
-cargo install cargo-component
 # create a new command component called `host-command-component`
-cargo component new host-command-component
+cargo new host-command-component
 ```
 
 Inside the `host-command-component` project, you need to add the following content to `Cargo.toml`:
 
 ```toml
 # other content omitted..........
-[package.metadata.component.target]
-# use the WIT file in the `wit` directory to define the world of this command component
-path = "wit"
-
-[package.metadata.component.target.dependencies]
-# Replace the path below with the actual path to directory containing `interfaced-adder.wit`
-"wasi-mindmap:interfaced-adder" = { path = "../guest-interfaced-adder-rs/wit" }
+[dependencies]
+wit-bindgen = "0.62.0"
 ```
 
 In `host-command-component/wit`, you need to add a WIT file for this command component, specifying its world:
@@ -569,12 +562,19 @@ world host {
 }
 ```
 
-And then run `cargo component check` to generate bindings for `interfaced-adder` components. You will see `bindings.rs` in `host-command-component/src/`.
-
+The `wit_bindgen::generate!` macro generates bindings for the imported adder interface at compile time.
 The main function of this command component is simple:
 
 ```rust
-mod bindings;
+mod bindings {
+    wit_bindgen::generate!({
+        // Load the imported package before the world that uses it.
+        path: ["../guest-interfaced-adder-rs/wit", "wit"],
+        world: "wasi-mindmap:host/host",
+        generate_all,
+    });
+}
+
 use bindings::wasi_mindmap::interfaced_adder::add::add;
 
 fn main() {
@@ -583,10 +583,10 @@ fn main() {
 }
 ```
 
-To compile this command component, run `cargo component build`. As of now, `cargo-component` still uses `wasm32-wasip1` as the target (see the [tracking issue](https://github.com/bytecodealliance/cargo-component/issues/355)), so you will find the compiled component in
-`target/wasm32-wasip1/debug/host-command-component.wasm`.
+To compile this command component, run `cargo build --target wasm32-wasip2` from `host-command-component`.
+You will find the compiled component in `target/wasm32-wasip2/debug/host-command-component.wasm`.
 
-This command component imports the `add` interface from `interfaced-adder` component and the interfaces from `wasi:cli/command` world, and then calls the `add` function. What it exports is the `wasi:cli/run` interface.
+This command component imports the `add` interface from `interfaced-adder` component and the interfaces from `wasi:cli/command` world, and then calls the `add` function. For `main()`, it exports the `wasi:cli/run` interface.
 Therefore, you cannot run this command component with `wasmtime` in command line yet, because `wasmtime` does not have the `add` interface implemented.
 
 What we can do is **composition**. We compose the `interfaced-adder` component with the `host-command-component` to form a new component, which imports only the `wasi:cli/command` interfaces and exports only the `wasi:cli/run` interface.

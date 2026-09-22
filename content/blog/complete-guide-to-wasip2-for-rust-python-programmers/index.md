@@ -402,7 +402,7 @@ fn main() -> Result<()> {
 
 非常简单！魔法在于 `wasmtime::component::bindgen` 宏，它在编译时根据 `adder.wit` 生成绑定。
 
-> 你可以运行 `cargo expand --bin host.rs` 来查看由 `bindgen` 生成的代码，调试的时候很有必要。
+> 你可以运行 `cargo expand -p host-rs --bin host-rs` 来查看由 `bindgen` 生成的代码，调试的时候很有必要。
 
 `bindgen` 也可以生成异步绑定，这在组件内部执行 I/O（如网络）时很有用。可以参考 [wasi_mindmap](https://github.com/ifsheldon/wasi_mindmap) 中的异步示例。
 

@@ -409,7 +409,7 @@ fn main() -> Result<()> {
 
 That's it! The magic lies in `wasmtime::component::bindgen` macro, which generates bindings according to `adder.wit` at compile time.
 
-> You can run `cargo expand --bin host.rs` to see the generated code by `bindgen`, which is sometimes necessary for debugging.
+> You can run `cargo expand -p host-rs --bin host-rs` to see the generated code by `bindgen`, which is sometimes necessary for debugging.
 
 Note that `bindgen` can generate asynchronous bindings as well, which is useful when a component internally performs IOs like networking. Please refer to the async examples in [wasi_mindmap](https://github.com/ifsheldon/wasi_mindmap).
 
@@ -496,8 +496,7 @@ OK, welcome back!
 
 Let's dive right into the first 2 questions.
 
-According to the [issue](<(https://github.com/bytecodealliance/wasmtime-py/issues/309)>), `wasmtime-py` does not currently support running components build with `componentize-py`, because `wasmtime-py` does not yet support resources, which components built with `componentize-py` always use, as `componentize-py` unconditionally imports most of the `wasi:cli`
-world. [↪](https://component-model.bytecodealliance.org/language-support/python.html#running-components-from-python-applications)
+According to the [issue](https://github.com/bytecodealliance/wasmtime-py/issues/309), `wasmtime-py` does not currently support running components build with `componentize-py`, because `wasmtime-py` does not yet support resources, which components built with `componentize-py` always use, as `componentize-py` unconditionally imports most of the `wasi:cli` world. [↪](https://component-model.bytecodealliance.org/language-support/python.html#running-components-from-python-applications)
 
 The explanation is simple, but why does `componentize-py` unconditionally import most of the `wasi:cli` world in the first place?
 

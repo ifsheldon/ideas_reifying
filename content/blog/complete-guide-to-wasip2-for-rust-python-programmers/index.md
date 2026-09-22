@@ -170,7 +170,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-wit-bindgen = "0.46"
+wit-bindgen = "0.62.0"
 ```
 
 有了神奇的 `wit_bindgen::generate` 宏，我们不用手写繁杂的胶水代码，而且所有实现代码都会经过我们最爱的 `rustc` 的静态检查。
@@ -277,7 +277,7 @@ componentize-py --wit-path adder.wit --world adder componentize guest-adder -o g
 
 实现主机有点复杂，所以我们先看 Rust 完整代码，然后分解它。
 
-我们需要最新的 `wasmtime`（_标准_ WASM 运行时的 crate）和 `wasmtime-wasi`（提供用于运行 WASIp1 模块和 WASIp2 组件的实用工具）：
+我们需要最新的 `wasmtime >= 49.0`（_标准_ WASM 运行时的 crate）和 `wasmtime-wasi >= 49.0`（提供用于运行 WASIp1 模块和 WASIp2 组件的实用工具）：
 
 ```toml
 # in host-rs/Cargo.toml
@@ -287,16 +287,15 @@ version = "0.5.2"
 edition = "2024"
 
 [dependencies]
-anyhow = "1.0"
-wasmtime = "38.0"
-wasmtime-wasi = "38.0"
+wasmtime = "49.0"
+wasmtime-wasi = "49.0"
 ```
 
 在深入主要逻辑之前，我们需要一些辅助工具：
 
 ```rust
-// in src/utils.rs
-use anyhow::Context;
+// in host-rs/src/utils.rs
+use wasmtime::error::Context;
 use wasmtime::component::{Component, Linker, ResourceTable};
 use wasmtime::{Engine, Result, Store};
 use wasmtime_wasi::{WasiCtx, WasiCtxBuilder, WasiCtxView, WasiView};
@@ -305,7 +304,7 @@ use wasmtime_wasi::{WasiCtx, WasiCtxBuilder, WasiCtxView, WasiView};
 // 参考：https://docs.wasmtime.dev/examples-rust-wasi.html
 
 pub(crate) struct ComponentRunStates {
-    // 这两个基本上是启用 WasiView 和 IoView 实现的标准方式
+    // 这两个是实现 WasiView 所需的标准字段
     pub wasi_ctx: WasiCtx,
     pub resource_table: ResourceTable,
 }
@@ -325,6 +324,14 @@ impl ComponentRunStates {
             wasi_ctx: WasiCtxBuilder::new().build(),
             resource_table: ResourceTable::new(),
         }
+    }
+}
+
+pub fn bind_interfaces_needed_by_guest_rust_std<T: WasiView>(l: &mut Linker<T>, r#async: bool) {
+    if r#async {
+        wasmtime_wasi::p2::add_to_linker_async(l).unwrap();
+    } else {
+        wasmtime_wasi::p2::add_to_linker_sync(l).unwrap();
     }
 }
 
@@ -349,6 +356,8 @@ pub fn get_component_linker_store(
 
 `get_component_linker_store` 是需要的辅助函数，它一次性为我们创建了 `Component`、`Linker<ComponentRunStates>` 和 `Store<ComponentRunStates>`。
 
+> `bind_interfaces_needed_by_guest_rust_std` 辅助函数注册客户端的 Rust 标准库所需的 WASI 导入，包括这里使用的调试构建。
+
 `Component` 表示一个已编译的组件，可以实例化，而 `Linker` 用于实例化 `Component`，将组件链接在一起，并向组件提供主机功能。`Store` 概念上有点复杂。
 `Store` 是 WebAssembly 状态的集合，这些状态有实例定义的，也有由主机定义的。所有 WebAssembly 实例和项目都会关联到 `Store` 并引用它。例如，实例、函数、全局变量和表都和 `Store` 关联。
 实例是通过在 `Store` 中实例化 WASM 模块（位于组件中）而创建的。
@@ -362,22 +371,26 @@ pub fn get_component_linker_store(
 有了这些实用工具，我们就可以托管、调用一个组件了。要调用 `adder` 组件的 `add` 同步函数，我们只需要几行代码：
 
 ```rust
-// in src/main.rs
-use crate::utils::get_component_linker_store;
+// in host-rs/src/main.rs
+use crate::utils::{bind_interfaces_needed_by_guest_rust_std, get_component_linker_store};
 use wasmtime::component::bindgen;
 use wasmtime::{Engine, Result};
 
+mod utils;
+
 bindgen!({
-    path: "adder.wit",
+    path: "../wit-files/adder.wit",
     world: "adder",
 });
 
 fn main() -> Result<()> {
-    let (component, linker, mut store) = get_component_linker_store(
-        engine,
-        "./target/wasm32-wasip2/release/guest_adder_rs.wasm",
+    let engine = Engine::default();
+    let (component, mut linker, mut store) = get_component_linker_store(
+        &engine,
         "./target/wasm32-wasip2/debug/guest_adder_rs.wasm",
+        "./target/wasm32-wasip2/release/guest_adder_rs.wasm",
     )?;
+    bind_interfaces_needed_by_guest_rust_std(&mut linker, false);
     let adder_bindings: Adder = Adder::instantiate(&mut store, &component, &linker)?;
     let a = 1;
     let b = 2;
@@ -404,7 +417,7 @@ fn main() -> Result<()> {
 首先我们需要安装 `wasmtime-py`：
 
 ```shell
-pip install -U "wasmtime>=38.0.0"
+pip install "wasmtime==38.0.0"
 ```
 
 如果你还没有编译，需要按照 [加法器组件](#rust-adder-component) 里的步骤编译 Rust 加法器组件。
@@ -612,23 +625,28 @@ result: 3
 
 在 [Rust 主机示例](#rust-host) 中，我们知道神奇的 `bindgen` 宏在编译时为组件的接口生成绑定。但如果我们想在运行时动态导入接口呢？例如，对具有任意接口的组件进行模糊测试。
 
-`wasmtime` crate 提供了这方面的 API，但用户体验故意做得不太好，来阻止用户。不过，这里有一个简单的例子：
+`wasmtime` crate 提供了在运行时查找导出项并检查其类型的 API，但使用体验被刻意设计得不太好，来劝退用户。不过，这里还是给一个简单的例子：
 
 ```rust
+// in host-rs/src/main.rs
+use crate::utils::{bind_interfaces_needed_by_guest_rust_std, get_component_linker_store};
+use wasmtime::{Engine, Result};
+
 pub fn run_adder_dynamic(engine: &Engine) -> Result<()> {
-    let (component, linker, mut store) = get_component_linker_store(
+    let (component, mut linker, mut store) = get_component_linker_store(
         engine,
+        "./target/wasm32-wasip2/debug/guest_interfaced_adder_rs.wasm",
         "./target/wasm32-wasip2/release/guest_interfaced_adder_rs.wasm",
-        "../target/wasm32-wasip2/release/guest_interfaced_adder_rs.wasm",
     )?;
+    bind_interfaces_needed_by_guest_rust_std(&mut linker, false);
     let instance = linker.instantiate(&mut store, &component)?;
     let interface_name = "wasi-mindmap:interfaced-adder/add";
-    let interface_idx = instance
+    let (_, interface_idx) = instance
         .get_export(&mut store, None, interface_name)
         .unwrap();
     let parent_export_idx = Some(&interface_idx);
     let func_name = "add";
-    let func_idx = instance
+    let (_, func_idx) = instance
         .get_export(&mut store, parent_export_idx, func_name)
         .unwrap();
     let func = instance.get_func(&mut store, func_idx).unwrap();
@@ -649,15 +667,20 @@ pub fn run_adder_dynamic(engine: &Engine) -> Result<()> {
     // 如果你在编译时知道函数参数和返回值的类型
     let typed_func = func.typed::<(i32, i32), (i32,)>(&store)?;
     let (result,) = typed_func.call(&mut store, (1, 2))?;
-    // 必需，参见 TypedFunc::call 的文档
-    typed_func.post_return(&mut store)?;
     assert_eq!(result, 3);
     Ok(())
 }
+
+fn main() -> Result<()> {
+    let engine = Engine::default();
+    run_adder_dynamic(&engine)
+}
 ```
 
-你需要从组件中递归获取导出项（例如，接口、函数、资源等）的句柄（即 `wasmtime::runtime::component::component::ComponentExportIndex`），可以使用父句柄。
-对于使用句柄获取的函数对象（即 `wasmtime::runtime::component::func::Func`），你可以迭代参数和返回值的类型。
+你需要递归获取接口、函数、资源等导出项的句柄，即 `wasmtime::component::ComponentExportIndex`。
+`get_export` 返回导出项的描述和它的句柄，句柄类型为 `wasmtime::component::ComponentExportIndex`。
+查找接口中的 `add` 函数时，把接口的句柄作为父句柄传入。
+对于使用句柄获取的函数对象（即 `wasmtime::component::Func`），你可以迭代参数和返回值的类型。
 如果你在编译时知道参数和返回值的类型，你可以使用 `Func::typed` 获取 `TypedFunc` 对象，它可以用来调用已经类型检查的函数。
 
 ## 结语
@@ -762,12 +785,12 @@ export!(KVStore);
 提供 `kvdb` 接口和 `log` 函数的主机更复杂：
 
 ```rust
-// main.rs
+// in host-rs/src/main.rs
 use crate::utils::get_component_linker_store;
 use crate::utils::{bind_interfaces_needed_by_guest_rust_std, ComponentRunStates};
 use std::collections::HashMap;
 use wasmtime::component::bindgen;
-use wasmtime::component::Resource;
+use wasmtime::component::{HasSelf, Resource};
 use wasmtime::{Engine, Result};
 
 bindgen!({
@@ -776,8 +799,8 @@ bindgen!({
     with: {
         "wasi-mindmap:kv-store/kvdb.connection": Connection
     },
-    // 与 `ResourceTable` 的交互可能会陷入困境，因此启用从生成的函数返回陷阱的能力。
-    trappable_imports: true,
+    // 与 `ResourceTable` 的交互可能失败，因此允许生成的导入函数返回 trap。
+    imports: { default: trappable },
 });
 
 pub struct Connection {
@@ -836,12 +859,11 @@ impl wasi_mindmap::kv_store::kvdb::HostConnection for ComponentRunStates {
 pub fn run_kv_store_sync(engine: &Engine) -> Result<()> {
     let (component, mut linker, mut store) = get_component_linker_store(
         engine,
+        "./target/wasm32-wasip2/debug/guest_kv_store_rs.wasm",
         "./target/wasm32-wasip2/release/guest_kv_store_rs.wasm",
-        "../target/wasm32-wasip2/release/guest_kv_store_rs.wasm",
     )?;
-    KvDatabase::add_to_linker(&mut linker, |s| s)?;
-    // 这是一个特殊的辅助函数，详情请参见 wasi-mindmap 仓库
-    bind_interfaces_needed_by_guest_rust_std(&mut linker);
+    KvDatabase::add_to_linker::<_, HasSelf<_>>(&mut linker, |s| s)?;
+    bind_interfaces_needed_by_guest_rust_std(&mut linker, false);
     let bindings = KvDatabase::instantiate(&mut store, &component, &linker)?;
     let result = bindings.call_replace_value(store, "hello", "world")?;
     assert_eq!(result, None);
@@ -859,9 +881,9 @@ fn main() -> Result<()> {
 
 ## 元数据
 
-版本：0.2.1
+版本：0.3.0
 
-日期：2025.04.22
+日期：2026.09.22
 
 许可：[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 
@@ -870,3 +892,6 @@ fn main() -> Result<()> {
 2025.11.14: 更新到最新代码
 
 2025.11.21: 更新到最新代码，使用 `wasmtime 39`
+
+2026.09.22: Rust 示例更新到 `wasmtime 49.0`、`wasmtime-wasi 49.0` 和 `wit-bindgen 0.62.0`；补全主机设置，更新动态导出查找和 KV 主机 API。
+Python Wasmtime 仍单独固定为 `38.0.0`，不随 Rust crate 版本变化。

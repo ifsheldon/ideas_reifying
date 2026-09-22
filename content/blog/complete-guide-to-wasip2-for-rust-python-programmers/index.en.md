@@ -174,7 +174,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-wit-bindgen = "0.46"
+wit-bindgen = "0.62.0"
 ```
 
 With the magical `wit_bindgen::generate` macro, we don't have to write boilerplate glue code. Even better, all implementation code is statically checked by our beloved `rustc`.
@@ -284,7 +284,7 @@ There are two ways to read the following content:
 
 The implementation of a host is a bit complicated, so let's take a look at the full code in Rust and then break it down.
 
-We need latest `wasmtime`, which is the crate of _the_ reference WASM runtime, and `wasmtime-wasi`, which provides utilities for running WASIp1 modules and WASIp2 components:
+We need latest `wasmtime >= 49.0`, which is the crate of _the_ reference WASM runtime, and `wasmtime-wasi >= 49.0`, which provides utilities for running WASIp1 modules and WASIp2 components:
 
 ```toml
 # in host-rs/Cargo.toml
@@ -294,16 +294,15 @@ version = "0.5.2"
 edition = "2024"
 
 [dependencies]
-anyhow = "1.0"
-wasmtime = "38.0"
-wasmtime-wasi = "38.0"
+wasmtime = "49.0"
+wasmtime-wasi = "49.0"
 ```
 
 Before diving into the main logics, we need some utilities:
 
 ```rust
-// in src/utils.rs
-use anyhow::Context;
+// in host-rs/src/utils.rs
+use wasmtime::error::Context;
 use wasmtime::component::{Component, Linker, ResourceTable};
 use wasmtime::{Engine, Result, Store};
 use wasmtime_wasi::{WasiCtx, WasiCtxBuilder, WasiCtxView, WasiView};
@@ -335,6 +334,14 @@ impl ComponentRunStates {
     }
 }
 
+pub fn bind_interfaces_needed_by_guest_rust_std<T: WasiView>(l: &mut Linker<T>, r#async: bool) {
+    if r#async {
+        wasmtime_wasi::p2::add_to_linker_async(l).unwrap();
+    } else {
+        wasmtime_wasi::p2::add_to_linker_sync(l).unwrap();
+    }
+}
+
 pub fn get_component_linker_store(
     engine: &Engine,
     path: &'static str,
@@ -356,6 +363,8 @@ pub fn get_component_linker_store(
 
 `get_component_linker_store` is the helper function we need, which creates a `Component`, a `Linker<ComponentRunStates>` and a `Store<ComponentRunStates>` all at once for us.
 
+> The `bind_interfaces_needed_by_guest_rust_std` helper registers the WASI imports required by a guest's Rust standard library, including the debug builds used here.
+
 `Component` represents a compiled component that is ready to be instantiated while `Linker` is used to instantiate `Component`s, linking components together as well as supplying host functionality to components. `Store` is conceptually a bit complicated.
 A `Store` is a collection of WebAssembly instances and host-defined state. All WebAssembly instances and items will be attached to and refer to a `Store`. For example instances, functions, globals, and tables are all attached to a `Store`.
 Instances are created by instantiating a WASM module (that resides in a component) within a `Store`.
@@ -369,22 +378,26 @@ If the above is a lot to take in, fear not. All you need to know for now is that
 With these utilities, we are ready to host a component. To synchronously call the `add` function of an `adder` component, we just need a few lines of code:
 
 ```rust
-// in src/main.rs
-use crate::utils::get_component_linker_store;
+// in host-rs/src/main.rs
+use crate::utils::{bind_interfaces_needed_by_guest_rust_std, get_component_linker_store};
 use wasmtime::component::bindgen;
 use wasmtime::{Engine, Result};
 
+mod utils;
+
 bindgen!({
-    path: "adder.wit",
+    path: "../wit-files/adder.wit",
     world: "adder",
 });
 
 fn main() -> Result<()> {
-    let (component, linker, mut store) = get_component_linker_store(
-        engine,
-        "./target/wasm32-wasip2/release/guest_adder_rs.wasm",
+    let engine = Engine::default();
+    let (component, mut linker, mut store) = get_component_linker_store(
+        &engine,
         "./target/wasm32-wasip2/debug/guest_adder_rs.wasm",
+        "./target/wasm32-wasip2/release/guest_adder_rs.wasm",
     )?;
+    bind_interfaces_needed_by_guest_rust_std(&mut linker, false);
     let adder_bindings: Adder = Adder::instantiate(&mut store, &component, &linker)?;
     let a = 1;
     let b = 2;
@@ -411,7 +424,7 @@ Notwithstanding, we can still run simple components compiled from Rust programs.
 First we will need to install `wasmtime-py`:
 
 ```shell
-pip install -U "wasmtime>=38.0.0"
+pip install "wasmtime==38.0.0"
 ```
 
 If you haven't done so, compile the Rust adder component as mentioned in [Adder Component](#rust-adder-component).
@@ -620,23 +633,28 @@ Imagine you have a Python component, a Go component and a C# component, as long 
 
 In the [Rust host example](#rust-host), we know that the magical `bindgen` macro generates bindings for the interfaces of a component at compile time. But what if we want to import interfaces dynamically at runtime? For example, fuzzing any components that have arbitrary interfaces.
 
-`wasmtime` crate provides APIs for that, but the user experience is intentionally not good to discourage users from doing so. But, anyway, here's a simple example:
+`wasmtime` crate provides APIs to look up exports and inspect their types at runtime, but the user experience is intentionally not good to discourage users from doing so. But, anyway, here's a simple example:
 
 ```rust
+// in host-rs/src/main.rs
+use crate::utils::{bind_interfaces_needed_by_guest_rust_std, get_component_linker_store};
+use wasmtime::{Engine, Result};
+
 pub fn run_adder_dynamic(engine: &Engine) -> Result<()> {
-    let (component, linker, mut store) = get_component_linker_store(
+    let (component, mut linker, mut store) = get_component_linker_store(
         engine,
+        "./target/wasm32-wasip2/debug/guest_interfaced_adder_rs.wasm",
         "./target/wasm32-wasip2/release/guest_interfaced_adder_rs.wasm",
-        "../target/wasm32-wasip2/release/guest_interfaced_adder_rs.wasm",
     )?;
+    bind_interfaces_needed_by_guest_rust_std(&mut linker, false);
     let instance = linker.instantiate(&mut store, &component)?;
     let interface_name = "wasi-mindmap:interfaced-adder/add";
-    let interface_idx = instance
+    let (_, interface_idx) = instance
         .get_export(&mut store, None, interface_name)
         .unwrap();
     let parent_export_idx = Some(&interface_idx);
     let func_name = "add";
-    let func_idx = instance
+    let (_, func_idx) = instance
         .get_export(&mut store, parent_export_idx, func_name)
         .unwrap();
     let func = instance.get_func(&mut store, func_idx).unwrap();
@@ -649,19 +667,28 @@ pub fn run_adder_dynamic(engine: &Engine) -> Result<()> {
     for (i, p) in ty.params().enumerate() {
         println!("Type of {i}th param: {p:?}");
     }
+    // iterate over the types of return values at run time
+    for (i, r) in ty.results().enumerate() {
+        println!("Type of {i}th result: {r:?}");
+    }
 
     // If you know the types of arguments and return values of the function at compile time
     let typed_func = func.typed::<(i32, i32), (i32,)>(&store)?;
     let (result,) = typed_func.call(&mut store, (1, 2))?;
-    // Required, see documentation of TypedFunc::call
-    typed_func.post_return(&mut store)?;
     assert_eq!(result, 3);
     Ok(())
 }
+
+fn main() -> Result<()> {
+    let engine = Engine::default();
+    run_adder_dynamic(&engine)
+}
 ```
 
-You need to recursively get a handle (i.e., `wasmtime::runtime::component::component::ComponentExportIndex`) to an exported item (e.g., an interface, a function, a resource, etc.) from a component with an optional parent handle.
-For a function object (i.e., `wasmtime::runtime::component::func::Func`) that you get with a handle, you can iterate over the types of arguments and return values.
+You need to recursively get a handle (i.e., `wasmtime::component::ComponentExportIndex`) to an exported item (e.g., an interface, a function, a resource, etc.)
+`get_export` returns an item's description and its handle, a `wasmtime::component::ComponentExportIndex`.
+Use the interface's handle as the parent when looking up its `add` function.
+For a function object (i.e., `wasmtime::component::Func`) that you get with a handle, you can iterate over the types of arguments and return values.
 If you know the types of arguments and return values at compile time, you can use `Func::typed` to get a `TypedFunc` object, which can be used to call the function with the types checked.
 
 ## Conclusion
@@ -767,12 +794,12 @@ export!(KVStore);
 The host providing the `kvdb` interface and the `log` function is more complicated:
 
 ```rust
-// main.rs
+// in host-rs/src/main.rs
 use crate::utils::get_component_linker_store;
 use crate::utils::{bind_interfaces_needed_by_guest_rust_std, ComponentRunStates};
 use std::collections::HashMap;
 use wasmtime::component::bindgen;
-use wasmtime::component::Resource;
+use wasmtime::component::{HasSelf, Resource};
 use wasmtime::{Engine, Result};
 
 bindgen!({
@@ -783,7 +810,7 @@ bindgen!({
     },
     // Interactions with `ResourceTable` can possibly trap so enable the ability
     // to return traps from generated functions.
-    trappable_imports: true,
+    imports: { default: trappable },
 });
 
 pub struct Connection {
@@ -842,12 +869,11 @@ impl wasi_mindmap::kv_store::kvdb::HostConnection for ComponentRunStates {
 pub fn run_kv_store_sync(engine: &Engine) -> Result<()> {
     let (component, mut linker, mut store) = get_component_linker_store(
         engine,
+        "./target/wasm32-wasip2/debug/guest_kv_store_rs.wasm",
         "./target/wasm32-wasip2/release/guest_kv_store_rs.wasm",
-        "../target/wasm32-wasip2/release/guest_kv_store_rs.wasm",
     )?;
-    KvDatabase::add_to_linker(&mut linker, |s| s)?;
-    // this is a special helper function, see the wasi-mindmap repo for more details
-    bind_interfaces_needed_by_guest_rust_std(&mut linker);
+    KvDatabase::add_to_linker::<_, HasSelf<_>>(&mut linker, |s| s)?;
+    bind_interfaces_needed_by_guest_rust_std(&mut linker, false);
     let bindings = KvDatabase::instantiate(&mut store, &component, &linker)?;
     let result = bindings.call_replace_value(store, "hello", "world")?;
     assert_eq!(result, None);
@@ -865,9 +891,9 @@ This code example should give you a sense of how to implement a host and a guest
 
 ## Metadata
 
-Version: 0.2.1
+Version: 0.3.0
 
-Date: 2025.01.01
+Date: 2026.09.22
 
 License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 
@@ -880,3 +906,6 @@ License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 2025.11.14: Updated to use latest code
 
 2025.11.21: Updated to use latest `wasmtime 39`
+
+2026.09.22: Updated Rust examples to `wasmtime 49.0`, `wasmtime-wasi 49.0`, and `wit-bindgen 0.62.0`; completed the host setup and updated dynamic export lookup and KV host APIs.
+Python Wasmtime remains pinned to `38.0.0` independently of the Rust crates.
